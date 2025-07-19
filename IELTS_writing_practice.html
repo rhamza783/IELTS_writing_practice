@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS Writing Pro</title>
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --background-color: #1e1e2d;
+            --text-color: #dcdcdc;
+            --card-background: #2d2d3f;
+            --correct-char-color: #2ecc71;
+            --incorrect-char-color: #e74c3c;
+            --incorrect-char-bg: rgba(231, 76, 60, 0.3);
+            --corrected-char-bg: rgba(241, 196, 15, 0.4);
+            --current-char-bg: rgba(52, 152, 219, 0.4);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            line-height: 1.6;
+            direction: ltr;
+        }
+
+        /* --- Custom Scrollbar Styling --- */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--background-color);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+
+        header {
+            background-color: var(--card-background);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        header h1 { margin: 0; color: var(--primary-color); }
+
+        nav .nav-btn {
+            background: none; border: 2px solid var(--secondary-color);
+            color: var(--secondary-color); padding: 0.5rem 1rem;
+            margin-left: 1rem; cursor: pointer; border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        nav .nav-btn:hover, nav .nav-btn.active {
+            background-color: var(--primary-color);
+            color: white; border-color: var(--primary-color);
+        }
+
+        main { padding: 2rem; }
+        .mode-content { display: none; animation: fadeIn 0.5s; }
+        .mode-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        h2 {
+            color: var(--primary-color); margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--secondary-color); padding-bottom: 0.5rem;
+        }
+        
+        h3, h4 { color: var(--secondary-color); }
+        h4 { line-height: 1.5; }
+
+        /* --- Enhanced Textarea Styles --- */
+        textarea {
+            width: 100%;
+            min-height: 250px;
+            box-sizing: border-box;
+            background-color: var(--card-background);
+            border: 2px solid var(--secondary-color);
+            color: var(--text-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-size: 1.6rem;
+            line-height: 2.2;
+            letter-spacing: 1px;
+            resize: vertical;
+            direction: ltr;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+        }
+        textarea::placeholder {
+            color: #888; /* More subtle placeholder */
+        }
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.4); /* Glow effect on focus */
+        }
+        textarea:disabled {
+            background-color: #2d2d3f;
+            cursor: not-allowed;
+        }
+
+        /* General Controls & Stats */
+        .stats { margin: 1rem 0; font-size: 1.1rem; display: flex; gap: 1.5rem; flex-wrap: wrap; }
+        .stats span { background-color: var(--card-background); padding: 0.5rem 1rem; border-radius: 5px; }
+        .controls { margin-top: 1rem; }
+        .controls button, .back-btn, .action-btn, .local-practice-controls button {
+            background-color: var(--primary-color); color: white; border: none; padding: 0.7rem 1.5rem; 
+            font-size: 1rem; border-radius: 5px; cursor: pointer; margin-right: 1rem;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .controls button:hover:not(:disabled), .back-btn:hover, .action-btn:hover, .local-practice-controls button:hover { transform: translateY(-2px); }
+        .controls button:disabled { background-color: #555; cursor: not-allowed; transform: none; }
+        .back-btn { background-color: #636e72; margin-bottom: 1.5rem; }
+        .action-btn.practice-btn { background-color: #00b894; }
+        .action-btn.write-btn { background-color: #ff7675; }
+        .reset-btn-local { background-color: #fdcb6e; }
+
+        /* --- Practice Test Specific Styles --- */
+        .task-categories { display: flex; justify-content: space-between; gap: 2rem; flex-wrap: wrap; }
+        .category { flex: 1; min-width: 300px; }
+        .category ul { list-style: none; padding: 0; }
+        .task-link {
+            display: block; background-color: var(--card-background); padding: 0.8rem 1.2rem;
+            margin-bottom: 0.5rem; border-radius: 5px; text-decoration: none;
+            color: var(--text-color); transition: background-color 0.3s; cursor: pointer;
+        }
+        .task-link:hover { background-color: var(--primary-color); }
+        .task-view, .question-detail-view { display: none; }
+        .question-item {
+            background-color: var(--card-background); padding: 1rem 1.5rem; margin-bottom: 1rem;
+            border-left: 4px solid var(--secondary-color); border-radius: 4px;
+            cursor: pointer; transition: all 0.2s ease;
+        }
+        .question-item:hover { border-left-color: var(--primary-color); transform: translateX(5px); }
+        
+        /* Detailed Question View */
+        .question-detail-view img { max-width: 100%; height: auto; border-radius: 8px; margin-top: 1rem; background: #fff; padding: 10px; box-sizing: border-box; }
+        .image-caption { font-style: italic; text-align: center; color: var(--secondary-color); margin-top: 0.5rem; margin-bottom: 2rem; }
+        .model-answer { background-color: var(--card-background); padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem; }
+        .model-answer h3 { color: var(--primary-color); margin-top: 0; }
+        .model-answer p { margin-bottom: 1em; }
+
+        /* Local Practice/Write Area within a Question */
+        .practice-controls { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--secondary-color); }
+        .practice-area { display: none; }
+        .practice-mode-view, .write-mode-view { display: none; margin-top: 1rem; }
+        .text-display-area-local, .write-input-local {
+            width: 100%; min-height: 250px; box-sizing: border-box; background-color: var(--card-background);
+            border: 2px solid var(--secondary-color); color: var(--text-color); padding: 1.5rem;
+            border-radius: 8px; font-size: 1.6rem; line-height: 2.2; letter-spacing: 1px; resize: vertical;
+        }
+        .text-display-area-local { user-select: none; cursor: text; max-height: 300px; overflow-y: auto; }
+        .typing-input-local { position: absolute; left: -9999px; opacity: 0; }
+        .write-input-local:disabled { background-color: #2d2d3f; }
+        
+        /* Main Custom Text Display Area */
+        #text-display-area {
+            background-color: var(--card-background);
+            border: 2px solid var(--secondary-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 1.6rem;
+            line-height: 2.2;
+            letter-spacing: 1px;
+            user-select: none;
+            cursor: text;
+            min-height: 250px;
+            max-height: 300px; 
+            overflow-y: auto;
+        }
+        #practice-box {
+            position: relative;
+        }
+        #typing-input {
+            position: absolute;
+            left: -9999px;
+            opacity: 0;
+        }
+
+        .char { transition: all 0.2s ease; }
+        .char.current { background-color: var(--current-char-bg); border-radius: 3px; }
+        .char.correct { color: var(--correct-char-color); }
+        .char.incorrect { color: var(--incorrect-char-color); background-color: var(--incorrect-char-bg); border-radius: 3px; }
+        .char.corrected { color: var(--correct-char-color); background-color: var(--corrected-char-bg); border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>IELTS Writing Pro</h1>
+        <nav>
+            <button id="mode1-btn" class="nav-btn active">Practice Tests</button>
+            <button id="mode2-btn" class="nav-btn">Freestyle Practice</button>
+            <button id="mode3-btn" class="nav-btn">Custom Text</button>
+            <button id="profile-btn" class="nav-btn">Profile</button>
+        </nav>
+    </header>
+
+    <main>
+        <section id="mode1" class="mode-content">
+            <!-- Main Test Selection Screen -->
+            <div id="task-selection-view">
+                <h2>Practice Tests</h2>
+                <div class="task-categories">
+                    <div class="category">
+                        <h3>Task 1 (Report Writing)</h3>
+                        <ul>
+                            <li><a class="task-link" data-target-view="bar-chart-view">Bar Chart</a></li>
+                            <li><a class="task-link" data-target-view="pie-chart-view">Pie Chart</a></li>
+                        </ul>
+                    </div>
+                    <div class="category">
+                        <h3>Task 2 (Essay Writing)</h3>
+                        <ul>
+                            <li><a class="task-link" data-target-view="opinion-view">Opinion Questions</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Task 1 Question Lists & Details -->
+             <div id="bar-chart-view" class="task-view">
+                <button class="back-btn" data-target-view="task-selection-view">← Back to Tests</button>
+                <h3>Bar Chart Questions</h3>
+                <div class="question-item" data-target-question="bar-chart-q1">The chart below shows the expenditure of two countries on consumer goods in 2010...</div>
+            </div>
+             <div id="pie-chart-view" class="task-view">
+                <button class="back-btn" data-target-view="task-selection-view">← Back to Tests</button>
+                <h3>Pie Chart Questions</h3>
+                <div class="question-item" data-target-question="pie-chart-q1">The pie charts show the amount of money that a children's charity...</div>
+            </div>
+            
+            <div id="bar-chart-q1" class="question-detail-view">
+                <button class="back-btn" data-target-view="bar-chart-view">← Back to Questions</button>
+                <h4>The chart below shows the expenditure of two countries on consumer goods in 2010. Summarise the information by selecting and reporting the main features.</h4>
+                <img src="https://i.pinimg.com/originals/f0/a2/a3/f0a2a35838c62c5b3827d8ae574f8a9a.png" alt="Bar chart of consumer goods expenditure">
+                <p class="image-caption">Expenditure on Consumer Goods in 2010.</p>
+                <div class="model-answer"><p>The bar chart illustrates the spending habits of France and the UK on five different consumer products in 2010. Overall, the UK spent more money on all goods, with cars being the most popular item for both nations. In contrast, perfume was the least purchased item in both countries.</p></div>
+                <div class="practice-controls"><button class="action-btn practice-btn">Practice Model Answer</button><button class="action-btn write-btn">Write Your Own</button></div>
+                <div class="practice-area">
+                    <div class="practice-mode-view">
+                        <div class="text-display-area-local" tabindex="0"></div>
+                        <input type="text" class="typing-input-local" autocomplete="off" spellcheck="false">
+                        <div class="stats">
+                            <span>Time: <span class="time-local">0</span>s</span>
+                            <span>WPM: <span class="wpm-local">0</span></span>
+                            <span>Accuracy: <span class="accuracy-local">100</span>%</span>
+                            <span>Words: <span class="words-local">0</span></span>
+                            <span>Chars: <span class="chars-local">0</span></span>
+                        </div>
+                        <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button></div>
+                    </div>
+                    <div class="write-mode-view">
+                         <textarea class="write-input-local" placeholder="Start writing your own answer here..."></textarea>
+                         <div class="stats">
+                             <span>Time: <span class="time-local">0</span>s</span>
+                             <span>WPM: <span class="wpm-local">0</span></span>
+                             <span>Words: <span class="words-local">0</span></span>
+                             <span>Chars: <span class="chars-local">0</span></span>
+                        </div>
+                         <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button></div>
+                    </div>
+                </div>
+            </div>
+            <div id="pie-chart-q1" class="question-detail-view">
+                <button class="back-btn" data-target-view="pie-chart-view">← Back to Questions</button>
+                <h4>The pie charts show the amount of money that a children's charity...</h4>
+                <div class="model-answer"><p>The pie charts show the amount of revenue and expenditures in 2016 for a children’s charity in the USA. Overall, it can be seen that donated food accounted for the majority of the income, while program services accounted for the most expenditure. Total revenue sources just exceeded outgoings.</p></div>
+                <div class="practice-controls"><button class="action-btn practice-btn">Practice Model Answer</button><button class="action-btn write-btn">Write Your Own</button></div>
+                <div class="practice-area">
+                    <div class="practice-mode-view">
+                        <div class="text-display-area-local" tabindex="0"></div>
+                        <input type="text" class="typing-input-local" autocomplete="off" spellcheck="false">
+                        <div class="stats">
+                            <span>Time: <span class="time-local">0</span>s</span>
+                            <span>WPM: <span class="wpm-local">0</span></span>
+                            <span>Accuracy: <span class="accuracy-local">100</span>%</span>
+                            <span>Words: <span class="words-local">0</span></span>
+                            <span>Chars: <span class="chars-local">0</span></span>
+                        </div>
+                        <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button></div>
+                    </div>
+                    <div class="write-mode-view">
+                         <textarea class="write-input-local" placeholder="Start writing your own answer here..."></textarea>
+                         <div class="stats">
+                             <span>Time: <span class="time-local">0</span>s</span>
+                             <span>WPM: <span class="wpm-local">0</span></span>
+                             <span>Words: <span class="words-local">0</span></span>
+                             <span>Chars: <span class="chars-local">0</span></span>
+                        </div>
+                         <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Task 2 Question List & Detail -->
+            <div id="opinion-view" class="task-view">
+                 <button class="back-btn" data-target-view="task-selection-view">← Back to Tests</button>
+                <h3>Opinion Questions</h3>
+                <div class="question-item" data-target-question="opinion-q1">Advances in technology and automation have reduced the need for manual labour...</div>
+            </div>
+            <div id="opinion-q1" class="question-detail-view">
+                <button class="back-btn" data-target-view="opinion-view">← Back to Questions</button>
+                <h4>(Opinion) Advances in technology and automation have reduced the need for manual labour...</h4>
+                <div class="model-answer"><p>It is argued that the proliferation of technological and automated systems in the workplace has diminished the requirement for human workers, and thus the standard working day should be shortened. I strongly agree with this assertion. A reduction in working hours would not only distribute available employment more equitably but also significantly enhance the well-being of employees.</p></div>
+                <div class="practice-controls"><button class="action-btn practice-btn">Practice Model Answer</button><button class="action-btn write-btn">Write Your Own</button></div>
+                 <div class="practice-area">
+                    <div class="practice-mode-view">
+                        <div class="text-display-area-local" tabindex="0"></div>
+                        <input type="text" class="typing-input-local" autocomplete="off" spellcheck="false">
+                        <div class="stats">
+                            <span>Time: <span class="time-local">0</span>s</span>
+                            <span>WPM: <span class="wpm-local">0</span></span>
+                            <span>Accuracy: <span class="accuracy-local">100</span>%</span>
+                            <span>Words: <span class="words-local">0</span></span>
+                            <span>Chars: <span class="chars-local">0</span></span>
+                        </div>
+                        <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button></div>
+                    </div>
+                    <div class="write-mode-view">
+                         <textarea class="write-input-local" placeholder="Start writing your own answer here..."></textarea>
+                         <div class="stats">
+                            <span>Time: <span class="time-local">0</span>s</span>
+                            <span>WPM: <span class="wpm-local">0</span></span>
+                            <span>Words: <span class="words-local">0</span></span>
+                            <span>Chars: <span class="chars-local">0</span></span>
+                        </div>
+                         <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====================================================== -->
+        <!-- MODE 2 & 3 HTML - COMPLETELY UNCHANGED AND INDEPENDENT -->
+        <!-- ====================================================== -->
+        <section id="mode2" class="mode-content">
+            <h2>Freestyle Practice</h2>
+            <div id="freestyle-box">
+                <textarea id="freestyle-input" placeholder="Start writing here..." disabled></textarea>
+            </div>
+            <div class="stats">
+                <span>Time: <span id="freestyle-time">0</span>s</span>
+                <span>WPM: <span id="freestyle-wpm">0</span></span>
+                <span>Words: <span id="freestyle-words">0</span></span>
+                <span>Characters: <span id="freestyle-chars">0</span></span>
+            </div>
+            <div class="controls">
+                <button id="start-freestyle-btn">Start</button>
+                <button id="pause-freestyle-btn" style="display: none;">Pause</button>
+                <button id="restart-freestyle-btn" style="display: none;">Restart</button>
+                <button id="reset-freestyle-btn" style="display: none;">Reset</button>
+            </div>
+        </section>
+        <section id="mode3" class="mode-content">
+            <h2>Custom Text Practice</h2>
+            <div id="setup-box">
+                <textarea id="source-text-input" placeholder="Paste your text here to practice..."></textarea>
+            </div>
+            <div id="practice-box" style="display: none;">
+                <div id="text-display-area"></div>
+                <input type="text" id="typing-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+            </div>
+            <div class="stats">
+                <span>Time: <span id="custom-time">0</span>s</span>
+                <span>WPM: <span id="custom-wpm">0</span></span>
+                <span>Accuracy: <span id="custom-accuracy">100</span>%</span>
+                <span>Words: <span id="custom-words">0</span></span>
+                <span>Characters: <span id="custom-chars">0</span></span>
+            </div>
+            <div class="controls">
+                <button id="start-custom-btn">Start</button>
+                <button id="pause-custom-btn" style="display: none;">Pause</button>
+                <button id="restart-custom-btn" style="display: none;">Restart</button>
+                <button id="reset-custom-btn" style="display: none;">New Text</button>
+            </div>
+        </section>
+        <section id="profile" class="mode-content"></section>
+    </main>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // ======================================================
+        // GLOBAL NAVIGATION & STATE
+        // ======================================================
+        const modes = document.querySelectorAll('.mode-content');
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const mode1Section = document.getElementById('mode1');
+        let activePracticeState = { interval: null, isPaused: false, element: null };
+
+        // Helper function to count words
+        const countWords = (str) => {
+            const trimmed = str.trim();
+            if (trimmed === '') return 0;
+            return trimmed.split(/\s+/).length;
+        };
+
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetModeId = button.id.replace('-btn', '');
+                modes.forEach(mode => mode.classList.remove('active'));
+                document.getElementById(targetModeId)?.classList.add('active');
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                if (targetModeId !== 'mode1') {
+                    resetToMainTestView();
+                }
+            });
+        });
+
+        // ======================================================
+        // MODE 1: PRACTICE TESTS NAVIGATION
+        // ======================================================
+        const taskLinks = document.querySelectorAll('#mode1 .task-link');
+        const backButtons = document.querySelectorAll('#mode1 .back-btn');
+        const questionItems = document.querySelectorAll('#mode1 .question-item');
+
+        taskLinks.forEach(link => link.addEventListener('click', (e) => switchView(e.currentTarget.dataset.targetView)));
+        backButtons.forEach(button => button.addEventListener('click', (e) => switchView(e.currentTarget.dataset.targetView)));
+        questionItems.forEach(item => item.addEventListener('click', (e) => switchView(e.currentTarget.dataset.targetQuestion)));
+
+        function switchView(targetViewId) {
+            resetActivePractice();
+            mode1Section.querySelectorAll('#task-selection-view, .task-view, .question-detail-view').forEach(view => {
+                view.style.display = 'none';
+            });
+            const targetView = document.getElementById(targetViewId);
+            if (targetView) targetView.style.display = 'block';
+        }
+
+        function resetToMainTestView() {
+            switchView('task-selection-view');
+        }
+        
+        // ======================================================
+        // LOCAL PRACTICE & WRITE LOGIC (WITHIN MODE 1)
+        // ======================================================
+        mode1Section.addEventListener('click', (e) => {
+            const detailView = e.target.closest('.question-detail-view');
+            if (!detailView) return;
+
+            const practiceArea = detailView.querySelector('.practice-area');
+            const modelAnswerText = detailView.querySelector('.model-answer p').textContent.trim();
+
+            if (e.target.classList.contains('practice-btn')) {
+                setupPracticeArea(detailView, 'practice');
+                initiateCustomPractice(practiceArea.querySelector('.practice-mode-view'), modelAnswerText);
+            } else if (e.target.classList.contains('write-btn')) {
+                setupPracticeArea(detailView, 'write');
+                initiateFreestylePractice(practiceArea.querySelector('.write-mode-view'));
+            } else if (e.target.classList.contains('pause-btn-local')) {
+                toggleLocalPause(e.target);
+            } else if (e.target.classList.contains('reset-btn-local')) {
+                resetLocalPractice(e.target);
+            }
+        });
+        
+        function setupPracticeArea(detailView, mode) {
+            resetActivePractice();
+            detailView.querySelector('.model-answer').style.display = 'none';
+            detailView.querySelector('.practice-controls').style.display = 'none';
+            const practiceArea = detailView.querySelector('.practice-area');
+            practiceArea.style.display = 'block';
+            practiceArea.querySelector('.practice-mode-view').style.display = mode === 'practice' ? 'block' : 'none';
+            practiceArea.querySelector('.write-mode-view').style.display = mode === 'write' ? 'block' : 'none';
+        }
+
+        function resetActivePractice() {
+            if (activePracticeState.interval) {
+                clearInterval(activePracticeState.interval);
+            }
+            activePracticeState = { interval: null, isPaused: false, element: null };
+
+            document.querySelectorAll('.practice-area').forEach(area => {
+                area.style.display = 'none';
+                area.querySelectorAll('.practice-mode-view, .write-mode-view').forEach(view => view.style.display = 'none');
+                area.querySelector('.text-display-area-local').innerHTML = '';
+                area.querySelector('.typing-input-local').value = '';
+                area.querySelector('.write-input-local').value = '';
+                area.querySelectorAll('.time-local, .wpm-local, .words-local, .chars-local').forEach(el => el.innerText = '0');
+                area.querySelectorAll('.accuracy-local').forEach(el => el.innerText = '100');
+                area.querySelectorAll('.pause-btn-local').forEach(btn => btn.innerText = 'Pause');
+            });
+            document.querySelectorAll('.model-answer, .practice-controls').forEach(el => el.style.display = 'block');
+        }
+
+        function toggleLocalPause(pauseButton) {
+            activePracticeState.isPaused = !activePracticeState.isPaused;
+            const view = pauseButton.closest('.practice-mode-view, .write-mode-view');
+            const input = view.querySelector('.typing-input-local, .write-input-local');
+            
+            if (activePracticeState.isPaused) {
+                pauseButton.innerText = 'Resume';
+                input.disabled = true;
+            } else {
+                pauseButton.innerText = 'Pause';
+                input.disabled = false;
+                input.focus();
+            }
+        }
+
+        function resetLocalPractice(resetButton) {
+            const detailView = resetButton.closest('.question-detail-view');
+            const practiceArea = detailView.querySelector('.practice-area');
+            const modelAnswerText = detailView.querySelector('.model-answer p').textContent.trim();
+            const currentMode = practiceArea.querySelector('.practice-mode-view').style.display === 'block' ? 'practice' : 'write';
+            
+            resetActivePractice();
+            setupPracticeArea(detailView, currentMode);
+
+            if (currentMode === 'practice') {
+                initiateCustomPractice(practiceArea.querySelector('.practice-mode-view'), modelAnswerText);
+            } else {
+                initiateFreestylePractice(practiceArea.querySelector('.write-mode-view'));
+            }
+        }
+
+        function initiateCustomPractice(view, text) {
+            const display = view.querySelector('.text-display-area-local');
+            const input = view.querySelector('.typing-input-local');
+            const timeEl = view.querySelector('.time-local');
+            const wpmEl = view.querySelector('.wpm-local');
+            const accEl = view.querySelector('.accuracy-local');
+            const wordsEl = view.querySelector('.words-local');
+            const charsEl = view.querySelector('.chars-local');
+            
+            let time = 0, correctChars = 0, totalTyped = 0;
+            
+            let charElements = text.split('').map(char => {
+                const span = document.createElement('span');
+                span.innerText = char;
+                span.className = 'char';
+                display.appendChild(span);
+                return span;
+            });
+            charElements[0]?.classList.add('current');
+            input.focus();
+
+            activePracticeState.element = view;
+            
+            const updateStats = () => {
+                const typedText = input.value;
+                timeEl.innerText = time;
+                accEl.innerText = totalTyped > 0 ? Math.round((correctChars / totalTyped) * 100) : 100;
+                wpmEl.innerText = time > 0 ? Math.round((correctChars / 5) / (time / 60)) : 0;
+                wordsEl.innerText = countWords(typedText);
+                charsEl.innerText = typedText.length;
+            };
+
+            input.oninput = () => {
+                if (!activePracticeState.interval) {
+                    activePracticeState.interval = setInterval(() => {
+                        if (!activePracticeState.isPaused) {
+                            time++;
+                            updateStats();
+                        }
+                    }, 1000);
+                }
+                const typed = input.value;
+                totalTyped = typed.length;
+                let currentCorrectCount = 0;
+
+                charElements.forEach((charSpan, index) => {
+                    charSpan.className = 'char';
+                    if (index < typed.length) {
+                        if(typed[index] === charSpan.innerText) { 
+                            currentCorrectCount++; 
+                            charSpan.classList.add('correct'); 
+                        } else { 
+                            charSpan.classList.add('incorrect'); 
+                        }
+                    } else if (index === typed.length) { 
+                        charSpan.classList.add('current'); 
+                    }
+                });
+                correctChars = currentCorrectCount;
+                charElements[typed.length]?.scrollIntoView({ block: 'nearest' });
+                updateStats();
+            };
+        }
+        
+        function initiateFreestylePractice(view) {
+            const input = view.querySelector('.write-input-local');
+            const timeEl = view.querySelector('.time-local');
+            const wpmEl = view.querySelector('.wpm-local');
+            const wordsEl = view.querySelector('.words-local');
+            const charsEl = view.querySelector('.chars-local');
+            let time = 0;
+            input.focus();
+            
+            activePracticeState.element = view;
+            
+            const updateStats = () => {
+                const text = input.value;
+                const wordCount = countWords(text);
+                timeEl.innerText = time;
+                wpmEl.innerText = time > 0 ? Math.round(wordCount / (time / 60)) : 0;
+                wordsEl.innerText = wordCount;
+                charsEl.innerText = text.length;
+            };
+
+            input.oninput = () => {
+                if (!activePracticeState.interval) {
+                    activePracticeState.interval = setInterval(() => {
+                        if (!activePracticeState.isPaused) {
+                            time++;
+                            updateStats();
+                        }
+                    }, 1000);
+                }
+                updateStats();
+            };
+        }
+
+        // ======================================================
+        // MODE 2: MAIN FREESTYLE PRACTICE SCRIPT (INDEPENDENT)
+        // ======================================================
+        const freestyleInput = document.getElementById('freestyle-input');
+        const startFreestyleBtn = document.getElementById('start-freestyle-btn');
+        const pauseFreestyleBtn = document.getElementById('pause-freestyle-btn');
+        const restartFreestyleBtn = document.getElementById('restart-freestyle-btn');
+        const resetFreestyleBtn = document.getElementById('reset-freestyle-btn');
+        const fTimeDisplay = document.getElementById('freestyle-time');
+        const fWpmDisplay = document.getElementById('freestyle-wpm');
+        const fWordsDisplay = document.getElementById('freestyle-words');
+        const fCharsDisplay = document.getElementById('freestyle-chars');
+        let freestyleTimerInterval, freestyleTimeElapsed = 0, isFreestylePaused = false, freestyleStarted = false;
+        
+        startFreestyleBtn.addEventListener('click', startFreestyle);
+        resetFreestyleBtn.addEventListener('click', resetFreestyle);
+        pauseFreestyleBtn.addEventListener('click', toggleFreestylePause);
+        restartFreestyleBtn.addEventListener('click', restartFreestyle);
+        freestyleInput.addEventListener('input', updateFreestyleStats);
+
+        function startFreestyle() {
+            freestyleInput.disabled = false;
+            startFreestyleBtn.style.display = 'none';
+            pauseFreestyleBtn.style.display = 'inline-block';
+            resetFreestyleBtn.style.display = 'inline-block';
+            freestyleInput.value = '';
+            freestyleInput.focus();
+            if (!freestyleStarted) { startFreestyleTimer(); freestyleStarted = true; }
+        }
+
+        function updateFreestyleStats() {
+            const text = freestyleInput.value;
+            const wordCount = countWords(text);
+            fWordsDisplay.innerText = wordCount;
+            fCharsDisplay.innerText = text.length;
+            fWpmDisplay.innerText = freestyleTimeElapsed > 0 ? Math.round(wordCount / (freestyleTimeElapsed / 60)) : 0;
+        }
+
+        function startFreestyleTimer() {
+            freestyleTimerInterval = setInterval(() => {
+                if (!isFreestylePaused) {
+                    freestyleTimeElapsed++;
+                    fTimeDisplay.innerText = freestyleTimeElapsed;
+                    updateFreestyleStats();
+                }
+            }, 1000);
+        }
+
+        function toggleFreestylePause() {
+            isFreestylePaused = !isFreestylePaused;
+            freestyleInput.disabled = isFreestylePaused;
+            if (isFreestylePaused) {
+                pauseFreestyleBtn.innerText = 'Resume';
+                restartFreestyleBtn.style.display = 'inline-block';
+            } else {
+                pauseFreestyleBtn.innerText = 'Pause';
+                restartFreestyleBtn.style.display = 'none';
+                freestyleInput.focus();
+            }
+        }
+
+        function resetFreestyleState() {
+            clearInterval(freestyleTimerInterval);
+            freestyleStarted = false;
+            isFreestylePaused = false;
+            freestyleTimeElapsed = 0;
+            fTimeDisplay.innerText = '0';
+            fWpmDisplay.innerText = '0';
+            fWordsDisplay.innerText = '0';
+            fCharsDisplay.innerText = '0';
+            pauseFreestyleBtn.innerText = 'Pause';
+            freestyleInput.value = '';
+        }
+
+        function restartFreestyle() { resetFreestyleState(); startFreestyle(); }
+        
+        function resetFreestyle() {
+            resetFreestyleState();
+            freestyleInput.disabled = true;
+            startFreestyleBtn.style.display = 'inline-block';
+            pauseFreestyleBtn.style.display = 'none';
+            restartFreestyleBtn.style.display = 'none';
+            resetFreestyleBtn.style.display = 'none';
+        }
+
+        // ======================================================
+        // MODE 3: MAIN CUSTOM TEXT PRACTICE SCRIPT (INDEPENDENT)
+        // ======================================================
+        const sourceTextInput = document.getElementById('source-text-input');
+        const setupBox = document.getElementById('setup-box');
+        const practiceBox = document.getElementById('practice-box');
+        const textDisplayArea = document.getElementById('text-display-area');
+        const typingInput = document.getElementById('typing-input');
+        const startCustomBtn = document.getElementById('start-custom-btn');
+        const pauseCustomBtn = document.getElementById('pause-custom-btn');
+        const restartCustomBtn = document.getElementById('restart-custom-btn');
+        const resetCustomBtn = document.getElementById('reset-custom-btn');
+        const cTimeDisplay = document.getElementById('custom-time');
+        const cWpmDisplay = document.getElementById('custom-wpm');
+        const cAccuracyDisplay = document.getElementById('custom-accuracy');
+        const cWordsDisplay = document.getElementById('custom-words');
+        const cCharsDisplay = document.getElementById('custom-chars');
+        
+        let cCharElements = [], cTotalTypedEntries = 0, cCorrectTypedEntries = 0;
+        let cTimerInterval, cTimeElapsed = 0, isCustomPaused = false, cPracticeStarted = false;
+        
+        startCustomBtn.addEventListener('click', startPractice);
+        resetCustomBtn.addEventListener('click', resetPractice);
+        pauseCustomBtn.addEventListener('click', togglePause);
+        restartCustomBtn.addEventListener('click', restartCurrentPractice);
+        textDisplayArea.addEventListener('click', () => typingInput.focus());
+        typingInput.addEventListener('input', handleCustomInput);
+
+        function startPractice() {
+            const text = sourceTextInput.value;
+            if (text.trim() === '') { return alert('Please paste some text to practice.'); }
+            setupBox.style.display = 'none';
+            practiceBox.style.display = 'block';
+            startCustomBtn.style.display = 'none';
+            pauseCustomBtn.style.display = 'inline-block';
+            resetCustomBtn.style.display = 'inline-block';
+            setupCustomTextDisplay(text);
+            typingInput.focus();
+        }
+        function setupCustomTextDisplay(text) {
+            textDisplayArea.innerHTML = '';
+            cCharElements = text.split('').map(char => {
+                const charSpan = document.createElement('span');
+                charSpan.innerText = char;
+                charSpan.className = 'char';
+                textDisplayArea.appendChild(charSpan);
+                return charSpan;
+            });
+            cCharElements[0]?.classList.add('current');
+            typingInput.focus();
+        }
+
+        function handleCustomInput() {
+            if (!cPracticeStarted) { startCustomTimer(); cPracticeStarted = true; }
+            if (isCustomPaused) return;
+            const typedText = typingInput.value;
+            cTotalTypedEntries = typedText.length;
+            cCorrectTypedEntries = 0;
+            cCharElements.forEach((charElement, index) => {
+                const character = charElement.innerText;
+                charElement.className = 'char';
+                if (index < typedText.length) {
+                    if (typedText[index] === character) {
+                        charElement.classList.add('correct');
+                        cCorrectTypedEntries++;
+                        if (charElement.dataset.mistake === 'true') charElement.classList.add('corrected');
+                    } else {
+                        charElement.classList.add('incorrect');
+                        charElement.dataset.mistake = 'true';
+                    }
+                } else if (index === typedText.length) {
+                    charElement.classList.add('current');
+                }
+            });
+            cCharElements[typedText.length]?.scrollIntoView({ block: 'center' });
+            updateCustomStats();
+            if (typedText.length === cCharElements.length) endCustomPractice();
+        }
+
+        function updateCustomStats() {
+            const typedText = typingInput.value;
+            cAccuracyDisplay.innerText = cTotalTypedEntries > 0 ? Math.round((cCorrectTypedEntries / cTotalTypedEntries) * 100) : 100;
+            cWpmDisplay.innerText = cTimeElapsed > 0 ? Math.round((cCorrectTypedEntries / 5) / (cTimeElapsed / 60)) : 0;
+            cWordsDisplay.innerText = countWords(typedText);
+            cCharsDisplay.innerText = typedText.length;
+        }
+
+        function togglePause() {
+            isCustomPaused = !isCustomPaused;
+            if (isCustomPaused) {
+                clearInterval(cTimerInterval);
+                pauseCustomBtn.innerText = 'Resume';
+                restartCustomBtn.style.display = 'inline-block';
+                typingInput.blur();
+            } else {
+                startCustomTimer();
+                pauseCustomBtn.innerText = 'Pause';
+                restartCustomBtn.style.display = 'none';
+                typingInput.focus();
+            }
+        }
+        function startCustomTimer() {
+            cTimerInterval = setInterval(() => {
+                if (!isCustomPaused) {
+                    cTimeElapsed++;
+                    cTimeDisplay.innerText = cTimeElapsed;
+                    updateCustomStats();
+                }
+            }, 1000);
+        }
+        function endCustomPractice() {
+            clearInterval(cTimerInterval);
+            pauseCustomBtn.style.display = 'none';
+            restartCustomBtn.style.display = 'none';
+            typingInput.blur();
+            alert(`Practice Finished!\nTime: ${cTimeElapsed}s\nWPM: ${cWpmDisplay.innerText}\nAccuracy: ${cAccuracyDisplay.innerText}%`);
+        }
+        function resetCustomPracticeState() {
+            clearInterval(cTimerInterval);
+            cPracticeStarted = false;
+            isCustomPaused = false;
+            cTimeElapsed = 0;
+            cTotalTypedEntries = 0;
+            cCorrectTypedEntries = 0;
+            typingInput.value = '';
+            cTimeDisplay.innerText = '0';
+            cWpmDisplay.innerText = '0';
+            cAccuracyDisplay.innerText = '100';
+            cWordsDisplay.innerText = '0';
+            cCharsDisplay.innerText = '0';
+            pauseCustomBtn.innerText = 'Pause';
+        }
+        function restartCurrentPractice() {
+            const originalText = cCharElements.map(el => el.innerText).join('');
+            resetCustomPracticeState();
+            setupCustomTextDisplay(originalText);
+            togglePause();
+        }
+        function resetPractice() {
+            resetCustomPracticeState();
+            practiceBox.style.display = 'none';
+            setupBox.style.display = 'block';
+            startCustomBtn.style.display = 'inline-block';
+            [pauseCustomBtn, resetCustomBtn, restartCustomBtn].forEach(btn => btn.style.display = 'none');
+            sourceTextInput.value = '';
+        }
+    });
+    </script>
+</body>
+</html>
