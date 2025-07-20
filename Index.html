@@ -206,7 +206,7 @@
     </header>
 
     <main>
-        <section id="mode1" class="mode-content">
+        <section id="mode1" class="mode-content active">
             <!-- Main Test Selection Screen -->
             <div id="task-selection-view">
                 <h2>Practice Tests</h2>
@@ -329,10 +329,10 @@
                     <div class="write-mode-view">
                          <textarea class="write-input-local" placeholder="Start writing your own answer here..."></textarea>
                          <div class="stats">
-                            <span>Time: <span class="time-local">0</span>s</span>
-                            <span>WPM: <span class="wpm-local">0</span></span>
-                            <span>Words: <span class="words-local">0</span></span>
-                            <span>Chars: <span class="chars-local">0</span></span>
+                             <span>Time: <span class="time-local">0</span>s</span>
+                             <span>WPM: <span class="wpm-local">0</span></span>
+                             <span>Words: <span class="words-local">0</span></span>
+                             <span>Chars: <span class="chars-local">0</span></span>
                         </div>
                          <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button></div>
                     </div>
@@ -404,13 +404,41 @@
             return trimmed.split(/\s+/).length;
         };
 
+        // Central function to end/reset any active test before switching views
+        function endAllActiveTests() {
+            // End active test in Mode 1 (Practice Tests)
+            // This is handled by resetActivePractice(), which is called by switchView()
+            // We ensure any open practice area is closed by resetting to the main view.
+            const activePracticeArea = document.querySelector('.practice-area[style*="block"]');
+            if (activePracticeArea) {
+                resetActivePractice();
+            }
+
+            // End active test in Mode 2 (Freestyle Practice)
+            const freestyleResetBtn = document.getElementById('reset-freestyle-btn');
+            if (freestyleResetBtn.style.display !== 'none') {
+                freestyleResetBtn.click(); // Programmatically click the reset button
+            }
+
+            // End active test in Mode 3 (Custom Text)
+            const customResetBtn = document.getElementById('reset-custom-btn');
+            if (customResetBtn.style.display !== 'none') {
+                customResetBtn.click(); // Programmatically click the reset button
+            }
+        }
+
         navButtons.forEach(button => {
             button.addEventListener('click', () => {
+                // First, end any active tests before doing anything else
+                endAllActiveTests();
+                
                 const targetModeId = button.id.replace('-btn', '');
                 modes.forEach(mode => mode.classList.remove('active'));
                 document.getElementById(targetModeId)?.classList.add('active');
                 navButtons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
+
+                // If navigating away from mode 1, ensure it's reset to the main task selection
                 if (targetModeId !== 'mode1') {
                     resetToMainTestView();
                 }
@@ -429,6 +457,7 @@
         questionItems.forEach(item => item.addEventListener('click', (e) => switchView(e.currentTarget.dataset.targetQuestion)));
 
         function switchView(targetViewId) {
+            // This function is key: it resets any local practice before showing a new view
             resetActivePractice();
             mode1Section.querySelectorAll('#task-selection-view, .task-view, .question-detail-view').forEach(view => {
                 view.style.display = 'none';
@@ -570,16 +599,22 @@
                 let currentCorrectCount = 0;
 
                 charElements.forEach((charSpan, index) => {
-                    charSpan.className = 'char';
+                    const character = charSpan.innerText;
+                    charSpan.classList.remove('correct', 'incorrect', 'current', 'corrected');
+
                     if (index < typed.length) {
-                        if(typed[index] === charSpan.innerText) { 
-                            currentCorrectCount++; 
-                            charSpan.classList.add('correct'); 
-                        } else { 
-                            charSpan.classList.add('incorrect'); 
+                        if (typed[index] === character) {
+                            charSpan.classList.add('correct');
+                            currentCorrectCount++;
+                            if (charSpan.dataset.mistake === 'true') {
+                                charSpan.classList.add('corrected');
+                            }
+                        } else {
+                            charSpan.classList.add('incorrect');
+                            charSpan.dataset.mistake = 'true';
                         }
-                    } else if (index === typed.length) { 
-                        charSpan.classList.add('current'); 
+                    } else if (index === typed.length) {
+                        charSpan.classList.add('current');
                     }
                 });
                 correctChars = currentCorrectCount;
@@ -761,17 +796,22 @@
         function handleCustomInput() {
             if (!cPracticeStarted) { startCustomTimer(); cPracticeStarted = true; }
             if (isCustomPaused) return;
+            
             const typedText = typingInput.value;
             cTotalTypedEntries = typedText.length;
             cCorrectTypedEntries = 0;
+
             cCharElements.forEach((charElement, index) => {
                 const character = charElement.innerText;
-                charElement.className = 'char';
+                charElement.classList.remove('correct', 'incorrect', 'current', 'corrected');
+
                 if (index < typedText.length) {
                     if (typedText[index] === character) {
                         charElement.classList.add('correct');
                         cCorrectTypedEntries++;
-                        if (charElement.dataset.mistake === 'true') charElement.classList.add('corrected');
+                        if (charElement.dataset.mistake === 'true') {
+                            charElement.classList.add('corrected');
+                        }
                     } else {
                         charElement.classList.add('incorrect');
                         charElement.dataset.mistake = 'true';
@@ -780,7 +820,7 @@
                     charElement.classList.add('current');
                 }
             });
-            cCharElements[typedText.length]?.scrollIntoView({ block: 'center' });
+            cCharElements[typedText.length]?.scrollIntoView({ block: 'nearest' });
             updateCustomStats();
             if (typedText.length === cCharElements.length) endCustomPractice();
         }
@@ -854,5 +894,5 @@
         }
     });
     </script>
-</body>
+</body> 
 </html>
