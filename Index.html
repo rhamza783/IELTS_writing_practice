@@ -123,6 +123,8 @@
         .action-btn.practice-btn { background-color: #00b894; }
         .action-btn.write-btn { background-color: #ff7675; }
         .reset-btn-local { background-color: #fdcb6e; }
+        .finish-btn { background-color: #e17055; }
+
 
         /* --- Practice Test Specific Styles --- */
         .task-categories { display: flex; justify-content: space-between; gap: 2rem; flex-wrap: wrap; }
@@ -257,7 +259,7 @@
                             <span>Words: <span class="words-local">0</span></span>
                             <span>Chars: <span class="chars-local">0</span></span>
                         </div>
-                        <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button></div>
+                        <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button><button class="finish-btn">Finished</button></div>
                     </div>
                     <div class="write-mode-view">
                          <textarea class="write-input-local" placeholder="Start writing your own answer here..."></textarea>
@@ -267,7 +269,7 @@
                              <span>Words: <span class="words-local">0</span></span>
                              <span>Chars: <span class="chars-local">0</span></span>
                         </div>
-                         <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button></div>
+                         <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button><button class="finish-btn">Finished</button></div>
                     </div>
                 </div>
             </div>
@@ -287,7 +289,7 @@
                             <span>Words: <span class="words-local">0</span></span>
                             <span>Chars: <span class="chars-local">0</span></span>
                         </div>
-                        <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button></div>
+                        <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button><button class="finish-btn">Finished</button></div>
                     </div>
                     <div class="write-mode-view">
                          <textarea class="write-input-local" placeholder="Start writing your own answer here..."></textarea>
@@ -297,7 +299,7 @@
                              <span>Words: <span class="words-local">0</span></span>
                              <span>Chars: <span class="chars-local">0</span></span>
                         </div>
-                         <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button></div>
+                         <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button><button class="finish-btn">Finished</button></div>
                     </div>
                 </div>
             </div>
@@ -324,7 +326,7 @@
                             <span>Words: <span class="words-local">0</span></span>
                             <span>Chars: <span class="chars-local">0</span></span>
                         </div>
-                        <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button></div>
+                        <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button><button class="finish-btn">Finished</button></div>
                     </div>
                     <div class="write-mode-view">
                          <textarea class="write-input-local" placeholder="Start writing your own answer here..."></textarea>
@@ -334,14 +336,14 @@
                              <span>Words: <span class="words-local">0</span></span>
                              <span>Chars: <span class="chars-local">0</span></span>
                         </div>
-                         <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button></div>
+                         <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button><button class="finish-btn">Finished</button></div>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- ====================================================== -->
-        <!-- MODE 2 & 3 HTML - COMPLETELY UNCHANGED AND INDEPENDENT -->
+        <!-- MODE 2 & 3 HTML -->
         <!-- ====================================================== -->
         <section id="mode2" class="mode-content">
             <h2>Freestyle Practice</h2>
@@ -359,6 +361,7 @@
                 <button id="pause-freestyle-btn" style="display: none;">Pause</button>
                 <button id="restart-freestyle-btn" style="display: none;">Restart</button>
                 <button id="reset-freestyle-btn" style="display: none;">Reset</button>
+                <button id="finish-freestyle-btn" class="finish-btn" style="display: none;">Finished</button>
             </div>
         </section>
         <section id="mode3" class="mode-content">
@@ -382,6 +385,7 @@
                 <button id="pause-custom-btn" style="display: none;">Pause</button>
                 <button id="restart-custom-btn" style="display: none;">Restart</button>
                 <button id="reset-custom-btn" style="display: none;">New Text</button>
+                <button id="finish-custom-btn" class="finish-btn" style="display: none;">Finished</button>
             </div>
         </section>
         <section id="profile" class="mode-content"></section>
@@ -407,8 +411,6 @@
         // Central function to end/reset any active test before switching views
         function endAllActiveTests() {
             // End active test in Mode 1 (Practice Tests)
-            // This is handled by resetActivePractice(), which is called by switchView()
-            // We ensure any open practice area is closed by resetting to the main view.
             const activePracticeArea = document.querySelector('.practice-area[style*="block"]');
             if (activePracticeArea) {
                 resetActivePractice();
@@ -417,19 +419,18 @@
             // End active test in Mode 2 (Freestyle Practice)
             const freestyleResetBtn = document.getElementById('reset-freestyle-btn');
             if (freestyleResetBtn.style.display !== 'none') {
-                freestyleResetBtn.click(); // Programmatically click the reset button
+                freestyleResetBtn.click();
             }
 
             // End active test in Mode 3 (Custom Text)
             const customResetBtn = document.getElementById('reset-custom-btn');
             if (customResetBtn.style.display !== 'none') {
-                customResetBtn.click(); // Programmatically click the reset button
+                customResetBtn.click();
             }
         }
 
         navButtons.forEach(button => {
             button.addEventListener('click', () => {
-                // First, end any active tests before doing anything else
                 endAllActiveTests();
                 
                 const targetModeId = button.id.replace('-btn', '');
@@ -438,11 +439,19 @@
                 navButtons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
 
-                // If navigating away from mode 1, ensure it's reset to the main task selection
                 if (targetModeId !== 'mode1') {
                     resetToMainTestView();
                 }
             });
+        });
+
+        // ======================================================
+        // UNIVERSAL FINISHED BUTTON LOGIC
+        // ======================================================
+        document.body.addEventListener('click', (e) => {
+            if (e.target.classList.contains('finish-btn')) {
+                location.reload();
+            }
         });
 
         // ======================================================
@@ -457,7 +466,6 @@
         questionItems.forEach(item => item.addEventListener('click', (e) => switchView(e.currentTarget.dataset.targetQuestion)));
 
         function switchView(targetViewId) {
-            // This function is key: it resets any local practice before showing a new view
             resetActivePractice();
             mode1Section.querySelectorAll('#task-selection-view, .task-view, .question-detail-view').forEach(view => {
                 view.style.display = 'none';
@@ -620,6 +628,11 @@
                 correctChars = currentCorrectCount;
                 charElements[typed.length]?.scrollIntoView({ block: 'nearest' });
                 updateStats();
+
+                 if (typed.length === charElements.length) {
+                    clearInterval(activePracticeState.interval);
+                    input.disabled = true;
+                }
             };
         }
         
@@ -662,6 +675,7 @@
         const freestyleInput = document.getElementById('freestyle-input');
         const startFreestyleBtn = document.getElementById('start-freestyle-btn');
         const pauseFreestyleBtn = document.getElementById('pause-freestyle-btn');
+        const finishFreestyleBtn = document.getElementById('finish-freestyle-btn');
         const restartFreestyleBtn = document.getElementById('restart-freestyle-btn');
         const resetFreestyleBtn = document.getElementById('reset-freestyle-btn');
         const fTimeDisplay = document.getElementById('freestyle-time');
@@ -681,6 +695,7 @@
             startFreestyleBtn.style.display = 'none';
             pauseFreestyleBtn.style.display = 'inline-block';
             resetFreestyleBtn.style.display = 'inline-block';
+            finishFreestyleBtn.style.display = 'inline-block';
             freestyleInput.value = '';
             freestyleInput.focus();
             if (!freestyleStarted) { startFreestyleTimer(); freestyleStarted = true; }
@@ -739,6 +754,7 @@
             pauseFreestyleBtn.style.display = 'none';
             restartFreestyleBtn.style.display = 'none';
             resetFreestyleBtn.style.display = 'none';
+            finishFreestyleBtn.style.display = 'none';
         }
 
         // ======================================================
@@ -751,6 +767,7 @@
         const typingInput = document.getElementById('typing-input');
         const startCustomBtn = document.getElementById('start-custom-btn');
         const pauseCustomBtn = document.getElementById('pause-custom-btn');
+        const finishCustomBtn = document.getElementById('finish-custom-btn');
         const restartCustomBtn = document.getElementById('restart-custom-btn');
         const resetCustomBtn = document.getElementById('reset-custom-btn');
         const cTimeDisplay = document.getElementById('custom-time');
@@ -777,6 +794,7 @@
             startCustomBtn.style.display = 'none';
             pauseCustomBtn.style.display = 'inline-block';
             resetCustomBtn.style.display = 'inline-block';
+            finishCustomBtn.style.display = 'inline-block';
             setupCustomTextDisplay(text);
             typingInput.focus();
         }
@@ -860,7 +878,7 @@
             clearInterval(cTimerInterval);
             pauseCustomBtn.style.display = 'none';
             restartCustomBtn.style.display = 'none';
-            typingInput.blur();
+            typingInput.disabled = true;
             alert(`Practice Finished!\nTime: ${cTimeElapsed}s\nWPM: ${cWpmDisplay.innerText}\nAccuracy: ${cAccuracyDisplay.innerText}%`);
         }
         function resetCustomPracticeState() {
@@ -871,6 +889,7 @@
             cTotalTypedEntries = 0;
             cCorrectTypedEntries = 0;
             typingInput.value = '';
+            typingInput.disabled = false;
             cTimeDisplay.innerText = '0';
             cWpmDisplay.innerText = '0';
             cAccuracyDisplay.innerText = '100';
@@ -889,7 +908,7 @@
             practiceBox.style.display = 'none';
             setupBox.style.display = 'block';
             startCustomBtn.style.display = 'inline-block';
-            [pauseCustomBtn, resetCustomBtn, restartCustomBtn].forEach(btn => btn.style.display = 'none');
+            [pauseCustomBtn, resetCustomBtn, restartCustomBtn, finishCustomBtn].forEach(btn => btn.style.display = 'none');
             sourceTextInput.value = '';
         }
     });
