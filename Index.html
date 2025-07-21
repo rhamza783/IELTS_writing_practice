@@ -194,6 +194,63 @@
         .char.correct { color: var(--correct-char-color); }
         .char.incorrect { color: var(--incorrect-char-color); background-color: var(--incorrect-char-bg); border-radius: 3px; }
         .char.corrected { color: var(--correct-char-color); background-color: var(--corrected-char-bg); border-radius: 3px; }
+
+        /* --- Results Modal --- */
+        .modal {
+            position: fixed; z-index: 1000; left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            display: none; align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background-color: var(--card-background);
+            color: var(--text-color);
+            padding: 2rem 3rem;
+            border-radius: 10px;
+            border: 1px solid var(--primary-color);
+            text-align: center;
+            width: 90%; max-width: 500px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.4);
+            animation: slideIn 0.4s ease-out forwards;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-content h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+        .modal-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+        .modal-stats-grid p {
+            background: var(--background-color);
+            padding: 0.8rem;
+            border-radius: 5px;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+        .modal-stats-grid span {
+            color: var(--secondary-color);
+            font-weight: bold;
+            float: right;
+        }
+        #modal-ok-btn {
+            background-color: var(--primary-color);
+            color: white; border: none;
+            padding: 0.8rem 2.5rem; font-size: 1.1rem;
+            border-radius: 5px; cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        #modal-ok-btn:hover {
+             background-color: var(--secondary-color);
+             transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
@@ -391,6 +448,23 @@
         <section id="profile" class="mode-content"></section>
     </main>
 
+    <!-- Results Modal -->
+    <div id="results-modal" class="modal">
+        <div class="modal-content">
+            <h2>Practice Complete!</h2>
+            <div class="modal-stats-grid">
+                <p>Time: <span id="modal-time">0s</span></p>
+                <p>WPM: <span id="modal-wpm">0</span></p>
+                <p>Accuracy: <span id="modal-accuracy">100%</span></p>
+                <p>Correct Letters: <span id="modal-correct">0</span></p>
+                <p>Mistakes: <span id="modal-mistakes">0</span></p>
+                <p>Total Words: <span id="modal-words">0</span></p>
+            </div>
+            <button id="modal-ok-btn">OK</button>
+        </div>
+    </div>
+
+
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         // ======================================================
@@ -401,6 +475,20 @@
         const mode1Section = document.getElementById('mode1');
         let activePracticeState = { interval: null, isPaused: false, element: null };
 
+        // ON PAGE LOAD: Check if a mode was stored to be re-opened
+        const activeModeOnReload = sessionStorage.getItem('activeModeOnReload');
+        if (activeModeOnReload) {
+            sessionStorage.removeItem('activeModeOnReload'); // Clear after use
+
+            // De-activate the default active elements
+            document.querySelector('.nav-btn.active')?.classList.remove('active');
+            document.querySelector('.mode-content.active')?.classList.remove('active');
+
+            // Activate the stored mode
+            document.getElementById(activeModeOnReload)?.classList.add('active');
+            document.getElementById(activeModeOnReload + '-btn')?.classList.add('active');
+        }
+
         // Helper function to count words
         const countWords = (str) => {
             const trimmed = str.trim();
@@ -410,19 +498,14 @@
 
         // Central function to end/reset any active test before switching views
         function endAllActiveTests() {
-            // End active test in Mode 1 (Practice Tests)
             const activePracticeArea = document.querySelector('.practice-area[style*="block"]');
             if (activePracticeArea) {
                 resetActivePractice();
             }
-
-            // End active test in Mode 2 (Freestyle Practice)
             const freestyleResetBtn = document.getElementById('reset-freestyle-btn');
             if (freestyleResetBtn.style.display !== 'none') {
                 freestyleResetBtn.click();
             }
-
-            // End active test in Mode 3 (Custom Text)
             const customResetBtn = document.getElementById('reset-custom-btn');
             if (customResetBtn.style.display !== 'none') {
                 customResetBtn.click();
@@ -450,6 +533,13 @@
         // ======================================================
         document.body.addEventListener('click', (e) => {
             if (e.target.classList.contains('finish-btn')) {
+                // Find the currently active mode from the nav button
+                const activeNavButton = document.querySelector('.nav-btn.active');
+                if (activeNavButton) {
+                    const activeModeId = activeNavButton.id.replace('-btn', '');
+                    sessionStorage.setItem('activeModeOnReload', activeModeId);
+                }
+                // Now reload the page
                 location.reload();
             }
         });
@@ -570,7 +660,7 @@
             const wordsEl = view.querySelector('.words-local');
             const charsEl = view.querySelector('.chars-local');
             
-            let time = 0, correctChars = 0, totalTyped = 0;
+            let time = 0, correctChars = 0, totalTyped = 0, mistakeCount = 0;
             
             let charElements = text.split('').map(char => {
                 const span = document.createElement('span');
@@ -586,9 +676,12 @@
             
             const updateStats = () => {
                 const typedText = input.value;
+                const accuracy = totalTyped > 0 ? Math.round((correctChars / totalTyped) * 100) : 100;
+                const wpm = time > 0 ? Math.round((correctChars / 5) / (time / 60)) : 0;
+                
                 timeEl.innerText = time;
-                accEl.innerText = totalTyped > 0 ? Math.round((correctChars / totalTyped) * 100) : 100;
-                wpmEl.innerText = time > 0 ? Math.round((correctChars / 5) / (time / 60)) : 0;
+                accEl.innerText = accuracy;
+                wpmEl.innerText = wpm;
                 wordsEl.innerText = countWords(typedText);
                 charsEl.innerText = typedText.length;
             };
@@ -605,6 +698,7 @@
                 const typed = input.value;
                 totalTyped = typed.length;
                 let currentCorrectCount = 0;
+                let currentMistakeCount = 0;
 
                 charElements.forEach((charSpan, index) => {
                     const character = charSpan.innerText;
@@ -619,19 +713,34 @@
                             }
                         } else {
                             charSpan.classList.add('incorrect');
-                            charSpan.dataset.mistake = 'true';
+                            if(charSpan.dataset.mistake !== 'true') {
+                                currentMistakeCount++;
+                                charSpan.dataset.mistake = 'true';
+                            }
                         }
                     } else if (index === typed.length) {
                         charSpan.classList.add('current');
                     }
                 });
                 correctChars = currentCorrectCount;
+                mistakeCount = display.querySelectorAll('.incorrect').length;
+
                 charElements[typed.length]?.scrollIntoView({ block: 'nearest' });
                 updateStats();
 
-                 if (typed.length === charElements.length) {
+                // --- TRIGGER MODAL ON COMPLETION ---
+                if (typed.length === charElements.length) {
                     clearInterval(activePracticeState.interval);
                     input.disabled = true;
+                    const finalStats = {
+                        time: time,
+                        wpm: wpmEl.innerText,
+                        accuracy: accEl.innerText,
+                        mistakes: mistakeCount,
+                        words: wordsEl.innerText,
+                        correctLetters: correctChars,
+                    };
+                    showResultsModal(finalStats);
                 }
             };
         }
@@ -668,6 +777,36 @@
                 updateStats();
             };
         }
+
+        // ======================================================
+        // RESULTS MODAL LOGIC
+        // ======================================================
+        const resultsModal = document.getElementById('results-modal');
+        const modalOkBtn = document.getElementById('modal-ok-btn');
+
+        function showResultsModal(stats) {
+            document.getElementById('modal-time').innerText = `${stats.time}s`;
+            document.getElementById('modal-wpm').innerText = stats.wpm;
+            document.getElementById('modal-accuracy').innerText = `${stats.accuracy}%`;
+            document.getElementById('modal-mistakes').innerText = stats.mistakes;
+            document.getElementById('modal-words').innerText = stats.words;
+            document.getElementById('modal-correct').innerText = stats.correctLetters;
+            resultsModal.style.display = 'flex';
+        }
+
+        modalOkBtn.addEventListener('click', () => {
+            resultsModal.style.display = 'none';
+            const activeMode = document.querySelector('.mode-content.active')?.id;
+
+            if (activeMode === 'mode1') {
+                 const activeDetailView = document.querySelector('.question-detail-view[style*="block"]');
+                if (activeDetailView) {
+                    activeDetailView.querySelector('.reset-btn-local').click();
+                }
+            } else if (activeMode === 'mode3') {
+                resetPractice();
+            }
+        });
 
         // ======================================================
         // MODE 2: MAIN FREESTYLE PRACTICE SCRIPT (INDEPENDENT)
@@ -776,7 +915,7 @@
         const cWordsDisplay = document.getElementById('custom-words');
         const cCharsDisplay = document.getElementById('custom-chars');
         
-        let cCharElements = [], cTotalTypedEntries = 0, cCorrectTypedEntries = 0;
+        let cCharElements = [], cTotalTypedEntries = 0, cCorrectTypedEntries = 0, cMistakeCount = 0;
         let cTimerInterval, cTimeElapsed = 0, isCustomPaused = false, cPracticeStarted = false;
         
         startCustomBtn.addEventListener('click', startPractice);
@@ -818,6 +957,7 @@
             const typedText = typingInput.value;
             cTotalTypedEntries = typedText.length;
             cCorrectTypedEntries = 0;
+            cMistakeCount = 0;
 
             cCharElements.forEach((charElement, index) => {
                 const character = charElement.innerText;
@@ -832,6 +972,7 @@
                         }
                     } else {
                         charElement.classList.add('incorrect');
+                        cMistakeCount++;
                         charElement.dataset.mistake = 'true';
                     }
                 } else if (index === typedText.length) {
@@ -840,7 +981,9 @@
             });
             cCharElements[typedText.length]?.scrollIntoView({ block: 'nearest' });
             updateCustomStats();
-            if (typedText.length === cCharElements.length) endCustomPractice();
+            if (typedText.length === cCharElements.length) {
+                triggerCustomPracticeCompletion();
+            }
         }
 
         function updateCustomStats() {
@@ -874,12 +1017,18 @@
                 }
             }, 1000);
         }
-        function endCustomPractice() {
+        function triggerCustomPracticeCompletion() {
             clearInterval(cTimerInterval);
-            pauseCustomBtn.style.display = 'none';
-            restartCustomBtn.style.display = 'none';
             typingInput.disabled = true;
-            alert(`Practice Finished!\nTime: ${cTimeElapsed}s\nWPM: ${cWpmDisplay.innerText}\nAccuracy: ${cAccuracyDisplay.innerText}%`);
+            const finalStats = {
+                time: cTimeElapsed,
+                wpm: cWpmDisplay.innerText,
+                accuracy: cAccuracyDisplay.innerText,
+                mistakes: cMistakeCount,
+                words: cWordsDisplay.innerText,
+                correctLetters: cCorrectTypedEntries,
+            };
+            showResultsModal(finalStats);
         }
         function resetCustomPracticeState() {
             clearInterval(cTimerInterval);
@@ -888,6 +1037,7 @@
             cTimeElapsed = 0;
             cTotalTypedEntries = 0;
             cCorrectTypedEntries = 0;
+            cMistakeCount = 0;
             typingInput.value = '';
             typingInput.disabled = false;
             cTimeDisplay.innerText = '0';
@@ -914,4 +1064,4 @@
     });
     </script>
 </body> 
-</html>
+    </html>
