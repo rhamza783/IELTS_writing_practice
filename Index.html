@@ -4,466 +4,1361 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IELTS Writing Pro</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <style>
         :root {
-            --primary-color: #6c5ce7;
-            --secondary-color: #a29bfe;
-            --background-color: #1e1e2d;
-            --text-color: #dcdcdc;
-            --card-background: #2d2d3f;
-            --correct-char-color: #2ecc71;
-            --incorrect-char-color: #e74c3c;
-            --incorrect-char-bg: rgba(231, 76, 60, 0.3);
-            --corrected-char-bg: rgba(241, 196, 15, 0.4);
-            --current-char-bg: rgba(52, 152, 219, 0.4);
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --accent: #f72585;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --error: #f94144;
+            
+            --dark-1: #1a1a2e;
+            --dark-2: #16213e;
+            --dark-3: #0f3460;
+            
+            --light-1: #f8f9fa;
+            --light-2: #e9ecef;
+            --light-3: #dee2e6;
+            
+            --text-primary: #f8f9fa;
+            --text-secondary: #e9ecef;
+            
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.12);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.15), 0 5px 10px rgba(0,0,0,0.05);
+            
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--dark-1);
+            color: var(--text-primary);
             line-height: 1.6;
-            direction: ltr;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* --- Custom Scrollbar Styling --- */
+        /* Scrollbar */
         ::-webkit-scrollbar {
-            width: 10px;
+            width: 8px;
+            height: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: var(--background-color);
+            background: var(--dark-2);
         }
         ::-webkit-scrollbar-thumb {
-            background: #555;
-            border-radius: 5px;
+            background: var(--primary);
+            border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-color);
+            background: var(--primary-light);
         }
 
+        /* Layout */
         header {
-            background-color: var(--card-background);
-            padding: 1rem 2rem;
+            background-color: var(--dark-2);
+            padding: 1rem;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid var(--primary-color);
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
-        header h1 { margin: 0; color: var(--primary-color); }
-
-        nav .nav-btn {
-            background: none; border: 2px solid var(--secondary-color);
-            color: var(--secondary-color); padding: 0.5rem 1rem;
-            margin-left: 1rem; cursor: pointer; border-radius: 5px;
-            transition: all 0.3s ease;
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
         }
 
-        nav .nav-btn:hover, nav .nav-btn.active {
-            background-color: var(--primary-color);
-            color: white; border-color: var(--primary-color);
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        main { padding: 2rem; }
-        .mode-content { display: none; animation: fadeIn 0.5s; }
-        .mode-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        h2 {
-            color: var(--primary-color); margin-bottom: 1.5rem;
-            border-bottom: 1px solid var(--secondary-color); padding-bottom: 0.5rem;
+        nav {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
         }
-        
-        h3, h4 { color: var(--secondary-color); }
-        h4 { line-height: 1.5; }
 
-        /* --- Enhanced Textarea Styles --- */
-        textarea {
+        main {
+            flex: 1;
+            padding: 1.5rem;
+            max-width: 1400px;
             width: 100%;
-            min-height: 250px;
-            box-sizing: border-box;
-            background-color: var(--card-background);
-            border: 2px solid var(--secondary-color);
-            color: var(--text-color);
-            padding: 1.5rem;
-            border-radius: 8px;
-            font-size: 1.6rem;
-            line-height: 2.2;
-            letter-spacing: 1px;
-            resize: vertical;
-            direction: ltr;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
-        }
-        textarea::placeholder {
-            color: #888; /* More subtle placeholder */
-        }
-        textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.4); /* Glow effect on focus */
-        }
-        textarea:disabled {
-            background-color: #2d2d3f;
-            cursor: not-allowed;
+            margin: 0 auto;
         }
 
-        /* General Controls & Stats */
-        .stats { margin: 1rem 0; font-size: 1.1rem; display: flex; gap: 1.5rem; flex-wrap: wrap; }
-        .stats span { background-color: var(--card-background); padding: 0.5rem 1rem; border-radius: 5px; }
-        .controls { margin-top: 1rem; }
-        .controls button, .back-btn, .action-btn, .local-practice-controls button {
-            background-color: var(--primary-color); color: white; border: none; padding: 0.7rem 1.5rem; 
-            font-size: 1rem; border-radius: 5px; cursor: pointer; margin-right: 1rem;
-            transition: background-color 0.3s, transform 0.2s;
+        /* Navigation */
+        .nav-btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
         }
-        .controls button:hover:not(:disabled), .back-btn:hover, .action-btn:hover, .local-practice-controls button:hover { transform: translateY(-2px); }
-        .controls button:disabled { background-color: #555; cursor: not-allowed; transform: none; }
-        .back-btn { background-color: #636e72; margin-bottom: 1.5rem; }
-        .action-btn.practice-btn { background-color: #00b894; }
-        .action-btn.write-btn { background-color: #ff7675; }
-        .reset-btn-local { background-color: #fdcb6e; }
-        .finish-btn { background-color: #e17055; }
 
+        .nav-btn:hover {
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary-light);
+        }
 
-        /* --- Practice Test Specific Styles --- */
-        .task-categories { display: flex; justify-content: space-between; gap: 2rem; flex-wrap: wrap; }
-        .category { flex: 1; min-width: 300px; }
-        .category ul { list-style: none; padding: 0; }
-        .task-link {
-            display: block; background-color: var(--card-background); padding: 0.8rem 1.2rem;
-            margin-bottom: 0.5rem; border-radius: 5px; text-decoration: none;
-            color: var(--text-color); transition: background-color 0.3s; cursor: pointer;
+        .nav-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: var(--shadow-sm);
         }
-        .task-link:hover { background-color: var(--primary-color); }
-        .task-view, .question-detail-view { display: none; }
-        .question-item {
-            background-color: var(--card-background); padding: 1rem 1.5rem; margin-bottom: 1rem;
-            border-left: 4px solid var(--secondary-color); border-radius: 4px;
-            cursor: pointer; transition: all 0.2s ease;
+
+        .nav-btn i {
+            font-size: 1.1rem;
         }
-        .question-item:hover { border-left-color: var(--primary-color); transform: translateX(5px); }
+
+        /* Content Sections */
+        .mode-content {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .mode-content.active {
+            display: block;
+        }
         
-        /* Detailed Question View */
-        .question-detail-view img { max-width: 100%; height: auto; border-radius: 8px; margin-top: 1rem; background: #fff; padding: 10px; box-sizing: border-box; }
-        .image-caption { font-style: italic; text-align: center; color: var(--secondary-color); margin-top: 0.5rem; margin-bottom: 2rem; }
-        .model-answer { background-color: var(--card-background); padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem; }
-        .model-answer h3 { color: var(--primary-color); margin-top: 0; }
-        .model-answer p { margin-bottom: 1em; }
-
-        /* Local Practice/Write Area within a Question */
-        .practice-controls { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--secondary-color); }
-        .practice-area { display: none; }
-        .practice-mode-view, .write-mode-view { display: none; margin-top: 1rem; }
-        .text-display-area-local, .write-input-local {
-            width: 100%; min-height: 250px; box-sizing: border-box; background-color: var(--card-background);
-            border: 2px solid var(--secondary-color); color: var(--text-color); padding: 1.5rem;
-            border-radius: 8px; font-size: 1.6rem; line-height: 2.2; letter-spacing: 1px; resize: vertical;
+        /* Hide practice test sub-views by default */
+        .task-view, .question-detail-view {
+            display: none;
         }
-        .text-display-area-local { user-select: none; cursor: text; max-height: 300px; overflow-y: auto; }
-        .typing-input-local { position: absolute; left: -9999px; opacity: 0; }
-        .write-input-local:disabled { background-color: #2d2d3f; }
-        
-        /* Main Custom Text Display Area */
-        #text-display-area {
-            background-color: var(--card-background);
-            border: 2px solid var(--secondary-color);
-            padding: 1.5rem;
-            border-radius: 8px;
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 {
+            line-height: 1.2;
+            font-weight: 600;
             margin-bottom: 1rem;
-            font-size: 1.6rem;
-            line-height: 2.2;
-            letter-spacing: 1px;
+            color: white;
+        }
+
+        h1 { font-size: 2rem; }
+        h2 { font-size: 1.75rem; }
+        h3 { font-size: 1.5rem; }
+        h4 { font-size: 1.25rem; }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .section-title i {
+            color: var(--primary-light);
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        /* Cards & Containers */
+        .card {
+            background: var(--dark-2);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.7rem 1.4rem;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--dark-3);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-accent {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-accent:hover {
+            background: #d91a6d;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: var(--dark-1);
+        }
+
+        .btn-success:hover {
+            background: #3ab4d9;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: var(--dark-1);
+        }
+
+        .btn-warning:hover {
+            background: #e07e0e;
+            transform: translateY(-2px);
+        }
+
+        .btn-error {
+            background: var(--error);
+            color: white;
+        }
+
+        .btn-error:hover {
+            background: #d62a2d;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-icon {
+            padding: 0.5rem;
+            border-radius: 50%;
+            min-width: 36px;
+            min-height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Forms & Inputs */
+        textarea, input[type="text"] {
+            width: 100%;
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            background: var(--dark-3);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 1rem;
+            line-height: 1.6;
+            transition: var(--transition);
+            resize: vertical;
+        }
+
+        textarea:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.3);
+        }
+
+        textarea::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* Stats & Indicators */
+        .stats {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        .stat {
+            background: var(--dark-3);
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 120px;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .stat-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Practice Test Styles */
+        .task-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .task-link {
+            display: block;
+            padding: 1.25rem;
+            background: var(--dark-2);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: var(--transition);
+            border-left: 4px solid var(--primary);
+        }
+
+        .task-link:hover {
+            background: var(--dark-3);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .task-link h3 {
+            margin-bottom: 0.5rem;
+            color: var(--primary-light);
+            font-size: 1.1rem;
+        }
+
+        .task-link p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+
+        .question-item {
+            background: var(--dark-2);
+            padding: 1.25rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border-left: 4px solid var(--primary);
+        }
+
+        .question-item:hover {
+            background: var(--dark-3);
+            transform: translateX(5px);
+        }
+
+        .model-answer {
+            background: var(--dark-3);
+            padding: 1.5rem;
+            border-radius: var(--radius-sm);
+            margin: 1.5rem 0;
+            border-left: 4px solid var(--success);
+        }
+
+        .model-answer h3 {
+            color: var(--success);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .image-container {
+            margin: 1.5rem 0;
+            background: white;
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-md);
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .image-caption {
+            text-align: center;
+            font-style: italic;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Practice Area */
+        .practice-controls {
+            display: flex;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .text-display-area, .text-display-area-local {
+            background: var(--dark-3);
+            padding: 1.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 1.1rem;
+            line-height: 1.8;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
             user-select: none;
             cursor: text;
-            min-height: 250px;
-            max-height: 300px; 
-            overflow-y: auto;
         }
-        #practice-box {
-            position: relative;
-        }
-        #typing-input {
+
+        .typing-input, .typing-input-local {
             position: absolute;
             left: -9999px;
             opacity: 0;
         }
 
-        .char { transition: all 0.2s ease; }
-        .char.current { background-color: var(--current-char-bg); border-radius: 3px; }
-        .char.correct { color: var(--correct-char-color); }
-        .char.incorrect { color: var(--incorrect-char-color); background-color: var(--incorrect-char-bg); border-radius: 3px; }
-        .char.corrected { color: var(--correct-char-color); background-color: var(--corrected-char-bg); border-radius: 3px; }
+        .controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
 
-        /* --- Results Modal --- */
+        /* Character styling -- NEW AND IMPROVED */
+        .char {
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .char.current {
+            background: rgba(72, 149, 239, 0.5); /* Brighter blue highlight for cursor */
+            border-radius: 2px;
+        }
+
+        .char.correct {
+            color: var(--success); /* Green for correct */
+        }
+
+        .char.incorrect {
+            color: var(--error); /* Red for incorrect */
+            background: rgba(249, 65, 68, 0.2); /* Red highlight */
+            border-radius: 2px;
+        }
+
+        .char.corrected {
+            color: var(--success); /* Green for corrected text */
+            background: rgba(248, 150, 30, 0.35); /* Yellow/Orange highlight */
+            border-radius: 2px;
+        }
+
+        /* Modal */
         .modal {
-            position: fixed; z-index: 1000; left: 0; top: 0;
-            width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.6);
-            display: none; align-items: center; justify-content: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
         }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
         .modal-content {
-            background-color: var(--card-background);
-            color: var(--text-color);
-            padding: 2rem 3rem;
-            border-radius: 10px;
-            border: 1px solid var(--primary-color);
-            text-align: center;
-            width: 90%; max-width: 500px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.4);
-            animation: slideIn 0.4s ease-out forwards;
+            background: var(--dark-2);
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            max-width: 500px;
+            width: 95%;
+            box-shadow: var(--shadow-lg);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
         }
-        @keyframes slideIn {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
         }
-        .modal-content h2 {
-            color: var(--primary-color);
-            margin-top: 0;
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
         }
+
+        .modal-header h2 {
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
         .modal-stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: 1rem;
             margin: 2rem 0;
-            text-align: left;
         }
-        .modal-stats-grid p {
-            background: var(--background-color);
-            padding: 0.8rem;
-            border-radius: 5px;
-            margin: 0;
-            font-size: 1.1rem;
+
+        .modal-stat {
+            background: var(--dark-3);
+            padding: 1rem;
+            border-radius: var(--radius-sm);
         }
-        .modal-stats-grid span {
-            color: var(--secondary-color);
-            font-weight: bold;
-            float: right;
+
+        .modal-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-light);
+            margin-top: 0.5rem;
         }
-        #modal-ok-btn {
-            background-color: var(--primary-color);
-            color: white; border: none;
-            padding: 0.8rem 2.5rem; font-size: 1.1rem;
-            border-radius: 5px; cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            nav {
+                justify-content: center;
+            }
+            
+            .task-categories {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                gap: 0.5rem;
+            }
+            
+            .stat {
+                min-width: calc(50% - 0.5rem);
+                flex-grow: 1;
+            }
+            
+            .practice-controls, .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
         }
-        #modal-ok-btn:hover {
-             background-color: var(--secondary-color);
-             transform: translateY(-2px);
+
+        @media (max-width: 480px) {
+            h1 { font-size: 1.75rem; }
+            h2 { font-size: 1.5rem; }
+            
+            .card {
+                padding: 1rem;
+            }
+            
+            .modal-stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat {
+                min-width: 100%;
+            }
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <header>
-        <h1>IELTS Writing Pro</h1>
-        <nav>
-            <button id="mode1-btn" class="nav-btn active">Practice Tests</button>
-            <button id="mode2-btn" class="nav-btn">Freestyle Practice</button>
-            <button id="mode3-btn" class="nav-btn">Custom Text</button>
-            <button id="profile-btn" class="nav-btn">Profile</button>
-        </nav>
+        <div class="header-container">
+            <a href="#" class="logo">
+                <span class="logo-icon">
+                    <i class="fas fa-pen-fancy"></i>
+                </span>
+                <span>IELTS Writing Pro</span>
+            </a>
+            <nav>
+                <button id="mode1-btn" class="nav-btn active">
+                    <i class="fas fa-clipboard-list"></i> Practice Tests
+                </button>
+                <button id="mode2-btn" class="nav-btn">
+                    <i class="fas fa-keyboard"></i> Freestyle
+                </button>
+                <button id="mode3-btn" class="nav-btn">
+                    <i class="fas fa-edit"></i> Custom Text
+                </button>
+                <button id="profile-btn" class="nav-btn">
+                    <i class="fas fa-user"></i> Profile
+                </button>
+            </nav>
+        </div>
     </header>
 
     <main>
+        <!-- Practice Tests Section -->
         <section id="mode1" class="mode-content active">
             <!-- Main Test Selection Screen -->
             <div id="task-selection-view">
-                <h2>Practice Tests</h2>
+                <h2 class="section-title">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Practice Tests</span>
+                </h2>
+                
                 <div class="task-categories">
                     <div class="category">
-                        <h3>Task 1 (Report Writing)</h3>
-                        <ul>
-                            <li><a class="task-link" data-target-view="bar-chart-view">Bar Chart</a></li>
-                            <li><a class="task-link" data-target-view="pie-chart-view">Pie Chart</a></li>
-                        </ul>
+                        <a href="javascript:void(0);" class="task-link" data-target-view="bar-chart-view">
+                            <h3><i class="fas fa-chart-bar"></i> Task 1 - Bar Chart</h3>
+                            <p>Practice writing reports based on bar chart data visualizations</p>
+                        </a>
                     </div>
                     <div class="category">
-                        <h3>Task 2 (Essay Writing)</h3>
-                        <ul>
-                            <li><a class="task-link" data-target-view="opinion-view">Opinion Questions</a></li>
-                        </ul>
+                        <a href="javascript:void(0);" class="task-link" data-target-view="pie-chart-view">
+                            <h3><i class="fas fa-chart-pie"></i> Task 1 - Pie Chart</h3>
+                            <p>Practice writing reports based on pie chart data visualizations</p>
+                        </a>
+                    </div>
+                    <div class="category">
+                        <a href="javascript:void(0);" class="task-link" data-target-view="opinion-view">
+                            <h3><i class="fas fa-comment-dots"></i> Task 2 - Opinion</h3>
+                            <p>Practice writing essays responding to opinion questions</p>
+                        </a>
                     </div>
                 </div>
             </div>
 
             <!-- Task 1 Question Lists & Details -->
-             <div id="bar-chart-view" class="task-view">
-                <button class="back-btn" data-target-view="task-selection-view">← Back to Tests</button>
-                <h3>Bar Chart Questions</h3>
-                <div class="question-item" data-target-question="bar-chart-q1">The chart below shows the expenditure of two countries on consumer goods in 2010...</div>
+            <div id="bar-chart-view" class="task-view">
+                <button class="btn btn-secondary back-btn" data-target-view="task-selection-view">
+                    <i class="fas fa-arrow-left"></i> Back to Tests
+                </button>
+                <h3 class="section-title">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Bar Chart Questions</span>
+                </h3>
+                
+                <div class="question-item" data-target-question="bar-chart-q1">
+                    <h4>The chart below shows the expenditure of two countries on consumer goods in 2010...</h4>
+                    <p><i class="fas fa-chevron-right"></i> Click to view question details</p>
+                </div>
             </div>
-             <div id="pie-chart-view" class="task-view">
-                <button class="back-btn" data-target-view="task-selection-view">← Back to Tests</button>
-                <h3>Pie Chart Questions</h3>
-                <div class="question-item" data-target-question="pie-chart-q1">The pie charts show the amount of money that a children's charity...</div>
+            
+            <div id="pie-chart-view" class="task-view">
+                <button class="btn btn-secondary back-btn" data-target-view="task-selection-view">
+                    <i class="fas fa-arrow-left"></i> Back to Tests
+                </button>
+                <h3 class="section-title">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Pie Chart Questions</span>
+                </h3>
+                
+                <div class="question-item" data-target-question="pie-chart-q1">
+                    <h4>The pie charts show the amount of money that a children's charity...</h4>
+                    <p><i class="fas fa-chevron-right"></i> Click to view question details</p>
+                </div>
             </div>
             
             <div id="bar-chart-q1" class="question-detail-view">
-                <button class="back-btn" data-target-view="bar-chart-view">← Back to Questions</button>
-                <h4>The chart below shows the expenditure of two countries on consumer goods in 2010. Summarise the information by selecting and reporting the main features.</h4>
-                <img src="https://i.pinimg.com/originals/f0/a2/a3/f0a2a35838c62c5b3827d8ae574f8a9a.png" alt="Bar chart of consumer goods expenditure">
-                <p class="image-caption">Expenditure on Consumer Goods in 2010.</p>
-                <div class="model-answer"><p>The bar chart illustrates the spending habits of France and the UK on five different consumer products in 2010. Overall, the UK spent more money on all goods, with cars being the most popular item for both nations. In contrast, perfume was the least purchased item in both countries.</p></div>
-                <div class="practice-controls"><button class="action-btn practice-btn">Practice Model Answer</button><button class="action-btn write-btn">Write Your Own</button></div>
-                <div class="practice-area">
-                    <div class="practice-mode-view">
-                        <div class="text-display-area-local" tabindex="0"></div>
-                        <input type="text" class="typing-input-local" autocomplete="off" spellcheck="false">
-                        <div class="stats">
-                            <span>Time: <span class="time-local">0</span>s</span>
-                            <span>WPM: <span class="wpm-local">0</span></span>
-                            <span>Accuracy: <span class="accuracy-local">100</span>%</span>
-                            <span>Words: <span class="words-local">0</span></span>
-                            <span>Chars: <span class="chars-local">0</span></span>
-                        </div>
-                        <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button><button class="finish-btn">Finished</button></div>
+                <button class="btn btn-secondary back-btn" data-target-view="bar-chart-view">
+                    <i class="fas fa-arrow-left"></i> Back to Questions
+                </button>
+                
+                <div class="card">
+                    <h4>The chart below shows the expenditure of two countries on consumer goods in 2010. Summarise the information by selecting and reporting the main features.</h4>
+                    
+                    <div class="image-container">
+                        <img src="https://i.pinimg.com/originals/f0/a2/a3/f0a2a35838c62c5b3827d8ae574f8a9a.png" alt="Bar chart of consumer goods expenditure">
+                        <p class="image-caption">Expenditure on Consumer Goods in 2010.</p>
                     </div>
-                    <div class="write-mode-view">
-                         <textarea class="write-input-local" placeholder="Start writing your own answer here..."></textarea>
-                         <div class="stats">
-                             <span>Time: <span class="time-local">0</span>s</span>
-                             <span>WPM: <span class="wpm-local">0</span></span>
-                             <span>Words: <span class="words-local">0</span></span>
-                             <span>Chars: <span class="chars-local">0</span></span>
+                    
+                    <div class="model-answer">
+                        <h3><i class="fas fa-lightbulb"></i> Model Answer</h3>
+                        <p>The bar chart illustrates the spending habits of France and the UK on five different consumer products in 2010. Overall, the UK spent more money on all goods, with cars being the most popular item for both nations. In contrast, perfume was the least purchased item in both countries.</p>
+                    </div>
+                    
+                    <div class="practice-controls">
+                        <button class="btn btn-success action-btn practice-btn">
+                            <i class="fas fa-keyboard"></i> Practice Model Answer
+                        </button>
+                        <button class="btn btn-accent action-btn write-btn">
+                            <i class="fas fa-edit"></i> Write Your Own
+                        </button>
+                    </div>
+                    
+                    <div class="practice-area">
+                        <div class="practice-mode-view">
+                            <div class="text-display-area-local" tabindex="0"></div>
+                            <input type="text" class="typing-input-local" autocomplete="off" spellcheck="false">
+                            
+                            <div class="stats">
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    Time
+                                    <span class="stat-value time-local">0s</span>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-tachometer-alt"></i>
+                                    </div>
+                                    WPM
+                                    <span class="stat-value wpm-local">0</span>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-bullseye"></i>
+                                    </div>
+                                    Accuracy
+                                    <span class="stat-value accuracy-local">100%</span>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-font"></i>
+                                    </div>
+                                    Words
+                                    <span class="stat-value words-local">0</span>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-text-height"></i>
+                                    </div>
+                                    Chars
+                                    <span class="stat-value chars-local">0</span>
+                                </div>
+                            </div>
+                            
+                            <div class="controls">
+                                <button class="btn btn-secondary pause-btn-local">
+                                    <i class="fas fa-pause"></i> Pause
+                                </button>
+                                <button class="btn btn-warning reset-btn-local">
+                                    <i class="fas fa-redo"></i> Reset
+                                </button>
+                                <button class="btn btn-error finish-btn-practice">
+                                    <i class="fas fa-flag-checkered"></i> Finished
+                                </button>
+                            </div>
                         </div>
-                         <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button><button class="finish-btn">Finished</button></div>
+                        
+                        <div class="write-mode-view">
+                            <textarea class="write-input-local" placeholder="Start writing your own answer here..."></textarea>
+                            
+                            <div class="stats">
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    Time
+                                    <span class="stat-value time-local">0s</span>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-tachometer-alt"></i>
+                                    </div>
+                                    WPM
+                                    <span class="stat-value wpm-local">0</span>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-font"></i>
+                                    </div>
+                                    Words
+                                    <span class="stat-value words-local">0</span>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-text-height"></i>
+                                    </div>
+                                    Chars
+                                    <span class="stat-value chars-local">0</span>
+                                </div>
+                            </div>
+                            
+                            <div class="controls">
+                                <button class="btn btn-secondary pause-btn-local">
+                                    <i class="fas fa-pause"></i> Pause
+                                </button>
+                                <button class="btn btn-warning reset-btn-local">
+                                    <i class="fas fa-redo"></i> Reset
+                                </button>
+                                <button class="btn btn-error finish-btn-practice">
+                                    <i class="fas fa-flag-checkered"></i> Finished
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+            
             <div id="pie-chart-q1" class="question-detail-view">
-                <button class="back-btn" data-target-view="pie-chart-view">← Back to Questions</button>
-                <h4>The pie charts show the amount of money that a children's charity...</h4>
-                <div class="model-answer"><p>The pie charts show the amount of revenue and expenditures in 2016 for a children’s charity in the USA. Overall, it can be seen that donated food accounted for the majority of the income, while program services accounted for the most expenditure. Total revenue sources just exceeded outgoings.</p></div>
-                <div class="practice-controls"><button class="action-btn practice-btn">Practice Model Answer</button><button class="action-btn write-btn">Write Your Own</button></div>
-                <div class="practice-area">
-                    <div class="practice-mode-view">
-                        <div class="text-display-area-local" tabindex="0"></div>
-                        <input type="text" class="typing-input-local" autocomplete="off" spellcheck="false">
-                        <div class="stats">
-                            <span>Time: <span class="time-local">0</span>s</span>
-                            <span>WPM: <span class="wpm-local">0</span></span>
-                            <span>Accuracy: <span class="accuracy-local">100</span>%</span>
-                            <span>Words: <span class="words-local">0</span></span>
-                            <span>Chars: <span class="chars-local">0</span></span>
-                        </div>
-                        <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button><button class="finish-btn">Finished</button></div>
+                <button class="btn btn-secondary back-btn" data-target-view="pie-chart-view">
+                    <i class="fas fa-arrow-left"></i> Back to Questions
+                </button>
+                
+                <div class="card">
+                    <h4>The pie charts show the amount of money that a children's charity in the USA spent and received in one year.</h4>
+                    
+                    <div class="model-answer">
+                        <h3><i class="fas fa-lightbulb"></i> Model Answer</h3>
+                        <p>The pie charts show the amount of revenue and expenditures in 2016 for a children's charity in the USA. Overall, it can be seen that donated food accounted for the majority of the income, while program services accounted for the most expenditure. Total revenue sources just exceeded outgoings.</p>
                     </div>
-                    <div class="write-mode-view">
-                         <textarea class="write-input-local" placeholder="Start writing your own answer here..."></textarea>
-                         <div class="stats">
-                             <span>Time: <span class="time-local">0</span>s</span>
-                             <span>WPM: <span class="wpm-local">0</span></span>
-                             <span>Words: <span class="words-local">0</span></span>
-                             <span>Chars: <span class="chars-local">0</span></span>
+                    
+                    <div class="practice-controls">
+                        <button class="btn btn-success action-btn practice-btn">
+                            <i class="fas fa-keyboard"></i> Practice Model Answer
+                        </button>
+                        <button class="btn btn-accent action-btn write-btn">
+                            <i class="fas fa-edit"></i> Write Your Own
+                        </button>
+                    </div>
+                    
+                    <div class="practice-area">
+                        <div class="practice-mode-view">
+                            <div class="text-display-area-local" tabindex="0"></div>
+                            <input type="text" class="typing-input-local" autocomplete="off" spellcheck="false">
+                            
+                            <div class="stats">
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    Time
+                                    <span class="stat-value time-local">0s</span>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-tachometer-alt"></i>
+                                    </div>
+                                    WPM
+                                    <span class="stat-value wpm-local">0</span>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-bullseye"></i>
+                                    </div>
+                                    Accuracy
+                                    <span class="stat-value accuracy-local">100%</span>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-font"></i>
+                                    </div>
+                                    Words
+                                    <span class="stat-value words-local">0</span>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-text-height"></i>
+                                    </div>
+                                    Chars
+                                    <span class="stat-value chars-local">0</span>
+                                </div>
+                            </div>
+                            
+                            <div class="controls">
+                                <button class="btn btn-secondary pause-btn-local">
+                                    <i class="fas fa-pause"></i> Pause
+                                </button>
+                                <button class="btn btn-warning reset-btn-local">
+                                    <i class="fas fa-redo"></i> Reset
+                                </button>
+                                <button class="btn btn-error finish-btn-practice">
+                                    <i class="fas fa-flag-checkered"></i> Finished
+                                </button>
+                            </div>
                         </div>
-                         <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button><button class="finish-btn">Finished</button></div>
+                        
+                        <div class="write-mode-view">
+                            <textarea class="write-input-local" placeholder="Start writing your own answer here..."></textarea>
+                            
+                            <div class="stats">
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    Time
+                                    <span class="stat-value time-local">0s</span>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-tachometer-alt"></i>
+                                    </div>
+                                    WPM
+                                    <span class="stat-value wpm-local">0</span>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-font"></i>
+                                    </div>
+                                    Words
+                                    <span class="stat-value words-local">0</span>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-text-height"></i>
+                                    </div>
+                                    Chars
+                                    <span class="stat-value chars-local">0</span>
+                                </div>
+                            </div>
+                            
+                            <div class="controls">
+                                <button class="btn btn-secondary pause-btn-local">
+                                    <i class="fas fa-pause"></i> Pause
+                                </button>
+                                <button class="btn btn-warning reset-btn-local">
+                                    <i class="fas fa-redo"></i> Reset
+                                </button>
+                                <button class="btn btn-error finish-btn-practice">
+                                    <i class="fas fa-flag-checkered"></i> Finished
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Task 2 Question List & Detail -->
             <div id="opinion-view" class="task-view">
-                 <button class="back-btn" data-target-view="task-selection-view">← Back to Tests</button>
-                <h3>Opinion Questions</h3>
-                <div class="question-item" data-target-question="opinion-q1">Advances in technology and automation have reduced the need for manual labour...</div>
+                <button class="btn btn-secondary back-btn" data-target-view="task-selection-view">
+                    <i class="fas fa-arrow-left"></i> Back to Tests
+                </button>
+                <h3 class="section-title">
+                    <i class="fas fa-comment-dots"></i>
+                    <span>Opinion Questions</span>
+                </h3>
+                
+                <div class="question-item" data-target-question="opinion-q1">
+                    <h4>Advances in technology and automation have reduced the need for manual labour...</h4>
+                    <p><i class="fas fa-chevron-right"></i> Click to view question details</p>
+                </div>
             </div>
+            
             <div id="opinion-q1" class="question-detail-view">
-                <button class="back-btn" data-target-view="opinion-view">← Back to Questions</button>
-                <h4>(Opinion) Advances in technology and automation have reduced the need for manual labour...</h4>
-                <div class="model-answer"><p>It is argued that the proliferation of technological and automated systems in the workplace has diminished the requirement for human workers, and thus the standard working day should be shortened. I strongly agree with this assertion. A reduction in working hours would not only distribute available employment more equitably but also significantly enhance the well-being of employees.</p></div>
-                <div class="practice-controls"><button class="action-btn practice-btn">Practice Model Answer</button><button class="action-btn write-btn">Write Your Own</button></div>
-                 <div class="practice-area">
-                    <div class="practice-mode-view">
-                        <div class="text-display-area-local" tabindex="0"></div>
-                        <input type="text" class="typing-input-local" autocomplete="off" spellcheck="false">
-                        <div class="stats">
-                            <span>Time: <span class="time-local">0</span>s</span>
-                            <span>WPM: <span class="wpm-local">0</span></span>
-                            <span>Accuracy: <span class="accuracy-local">100</span>%</span>
-                            <span>Words: <span class="words-local">0</span></span>
-                            <span>Chars: <span class="chars-local">0</span></span>
-                        </div>
-                        <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button><button class="finish-btn">Finished</button></div>
+                <button class="btn btn-secondary back-btn" data-target-view="opinion-view">
+                    <i class="fas fa-arrow-left"></i> Back to Questions
+                </button>
+                
+                <div class="card">
+                    <h4>(Opinion) Advances in technology and automation have reduced the need for manual labour. Therefore, the standard working day should be shortened. To what extent do you agree or disagree?</h4>
+                    
+                    <div class="model-answer">
+                        <h3><i class="fas fa-lightbulb"></i> Model Answer</h3>
+                        <p>It is argued that the proliferation of technological and automated systems in the workplace has diminished the requirement for human workers, and thus the standard working day should be shortened. I strongly agree with this assertion. A reduction in working hours would not only distribute available employment more equitably but also significantly enhance the well-being of employees.</p>
                     </div>
-                    <div class="write-mode-view">
-                         <textarea class="write-input-local" placeholder="Start writing your own answer here..."></textarea>
-                         <div class="stats">
-                             <span>Time: <span class="time-local">0</span>s</span>
-                             <span>WPM: <span class="wpm-local">0</span></span>
-                             <span>Words: <span class="words-local">0</span></span>
-                             <span>Chars: <span class="chars-local">0</span></span>
+                    
+                    <div class="practice-controls">
+                        <button class="btn btn-success action-btn practice-btn">
+                            <i class="fas fa-keyboard"></i> Practice Model Answer
+                        </button>
+                        <button class="btn btn-accent action-btn write-btn">
+                            <i class="fas fa-edit"></i> Write Your Own
+                        </button>
+                    </div>
+                    
+                    <div class="practice-area">
+                        <div class="practice-mode-view">
+                            <div class="text-display-area-local" tabindex="0"></div>
+                            <input type="text" class="typing-input-local" autocomplete="off" spellcheck="false">
+                            
+                            <div class="stats">
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    Time
+                                    <span class="stat-value time-local">0s</span>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-tachometer-alt"></i>
+                                    </div>
+                                    WPM
+                                    <span class="stat-value wpm-local">0</span>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-bullseye"></i>
+                                    </div>
+                                    Accuracy
+                                    <span class="stat-value accuracy-local">100%</span>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-font"></i>
+                                    </div>
+                                    Words
+                                    <span class="stat-value words-local">0</span>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-text-height"></i>
+                                    </div>
+                                    Chars
+                                    <span class="stat-value chars-local">0</span>
+                                </div>
+                            </div>
+                            
+                            <div class="controls">
+                                <button class="btn btn-secondary pause-btn-local">
+                                    <i class="fas fa-pause"></i> Pause
+                                </button>
+                                <button class="btn btn-warning reset-btn-local">
+                                    <i class="fas fa-redo"></i> Reset
+                                </button>
+                                <button class="btn btn-error finish-btn-practice">
+                                    <i class="fas fa-flag-checkered"></i> Finished
+                                </button>
+                            </div>
                         </div>
-                         <div class="local-practice-controls"><button class="pause-btn-local">Pause</button><button class="reset-btn-local">Reset</button><button class="finish-btn">Finished</button></div>
+                        
+                        <div class="write-mode-view">
+                            <textarea class="write-input-local" placeholder="Start writing your own answer here..."></textarea>
+                            
+                            <div class="stats">
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    Time
+                                    <span class="stat-value time-local">0s</span>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-tachometer-alt"></i>
+                                    </div>
+                                    WPM
+                                    <span class="stat-value wpm-local">0</span>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-font"></i>
+                                    </div>
+                                    Words
+                                    <span class="stat-value words-local">0</span>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-text-height"></i>
+                                    </div>
+                                    Chars
+                                    <span class="stat-value chars-local">0</span>
+                                </div>
+                            </div>
+                            
+                            <div class="controls">
+                                <button class="btn btn-secondary pause-btn-local">
+                                    <i class="fas fa-pause"></i> Pause
+                                </button>
+                                <button class="btn btn-warning reset-btn-local">
+                                    <i class="fas fa-redo"></i> Reset
+                                </button>
+                                <button class="btn btn-error finish-btn-practice">
+                                    <i class="fas fa-flag-checkered"></i> Finished
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- ====================================================== -->
-        <!-- MODE 2 & 3 HTML -->
-        <!-- ====================================================== -->
+        <!-- Freestyle Practice Section -->
         <section id="mode2" class="mode-content">
-            <h2>Freestyle Practice</h2>
-            <div id="freestyle-box">
-                <textarea id="freestyle-input" placeholder="Start writing here..." disabled></textarea>
-            </div>
-            <div class="stats">
-                <span>Time: <span id="freestyle-time">0</span>s</span>
-                <span>WPM: <span id="freestyle-wpm">0</span></span>
-                <span>Words: <span id="freestyle-words">0</span></span>
-                <span>Characters: <span id="freestyle-chars">0</span></span>
-            </div>
-            <div class="controls">
-                <button id="start-freestyle-btn">Start</button>
-                <button id="pause-freestyle-btn" style="display: none;">Pause</button>
-                <button id="restart-freestyle-btn" style="display: none;">Restart</button>
-                <button id="reset-freestyle-btn" style="display: none;">Reset</button>
-                <button id="finish-freestyle-btn" class="finish-btn" style="display: none;">Finished</button>
+            <h2 class="section-title">
+                <i class="fas fa-keyboard"></i>
+                <span>Freestyle Practice</span>
+            </h2>
+            
+            <div class="card">
+                <div id="freestyle-box">
+                    <textarea id="freestyle-input" placeholder="Start writing here..." disabled></textarea>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        Time
+                        <span class="stat-value" id="freestyle-time">0s</span>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        WPM
+                        <span class="stat-value" id="freestyle-wpm">0</span>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-font"></i>
+                        </div>
+                        Words
+                        <span class="stat-value" id="freestyle-words">0</span>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-text-height"></i>
+                        </div>
+                        Characters
+                        <span class="stat-value" id="freestyle-chars">0</span>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button class="btn btn-primary" id="start-freestyle-btn">
+                        <i class="fas fa-play"></i> Start
+                    </button>
+                    <button class="btn btn-secondary" id="pause-freestyle-btn" style="display: none;">
+                        <i class="fas fa-pause"></i> Pause
+                    </button>
+                    <button class="btn btn-warning" id="restart-freestyle-btn" style="display: none;">
+                        <i class="fas fa-redo"></i> Restart
+                    </button>
+                    <button class="btn btn-secondary" id="reset-freestyle-btn" style="display: none;">
+                        <i class="fas fa-undo"></i> Reset
+                    </button>
+                    <button class="btn btn-error" id="finish-freestyle-btn" style="display: none;">
+                        <i class="fas fa-flag-checkered"></i> Finished
+                    </button>
+                </div>
             </div>
         </section>
+
+        <!-- Custom Text Practice Section -- UPDATED HTML STRUCTURE -->
         <section id="mode3" class="mode-content">
-            <h2>Custom Text Practice</h2>
-            <div id="setup-box">
+            <h2 class="section-title">
+                <i class="fas fa-edit"></i>
+                <span>Custom Text Practice</span>
+            </h2>
+            
+            <div class="card">
+                <!-- The textarea for input and the div for practice now exist in the same space -->
                 <textarea id="source-text-input" placeholder="Paste your text here to practice..."></textarea>
-            </div>
-            <div id="practice-box" style="display: none;">
-                <div id="text-display-area"></div>
-                <input type="text" id="typing-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-            </div>
-            <div class="stats">
-                <span>Time: <span id="custom-time">0</span>s</span>
-                <span>WPM: <span id="custom-wpm">0</span></span>
-                <span>Accuracy: <span id="custom-accuracy">100</span>%</span>
-                <span>Words: <span id="custom-words">0</span></span>
-                <span>Characters: <span id="custom-chars">0</span></span>
-            </div>
-            <div class="controls">
-                <button id="start-custom-btn">Start</button>
-                <button id="pause-custom-btn" style="display: none;">Pause</button>
-                <button id="restart-custom-btn" style="display: none;">Restart</button>
-                <button id="reset-custom-btn" style="display: none;">New Text</button>
-                <button id="finish-custom-btn" class="finish-btn" style="display: none;">Finished</button>
+                <div id="text-display-area" class="text-display-area" style="display: none;"></div>
+                
+                <!-- This hidden input captures all typing -->
+                <input type="text" id="typing-input" class="typing-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        Time
+                        <span class="stat-value" id="custom-time">0s</span>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        WPM
+                        <span class="stat-value" id="custom-wpm">0</span>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        Accuracy
+                        <span class="stat-value" id="custom-accuracy">100%</span>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-font"></i>
+                        </div>
+                        Words
+                        <span class="stat-value" id="custom-words">0</span>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-text-height"></i>
+                        </div>
+                        Characters
+                        <span class="stat-value" id="custom-chars">0</span>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button class="btn btn-primary" id="start-custom-btn">
+                        <i class="fas fa-play"></i> Start
+                    </button>
+                    <button class="btn btn-secondary" id="pause-custom-btn" style="display: none;">
+                        <i class="fas fa-pause"></i> Pause
+                    </button>
+                    <button class="btn btn-warning" id="restart-custom-btn" style="display: none;">
+                        <i class="fas fa-redo"></i> Restart
+                    </button>
+                    <button class="btn btn-secondary" id="reset-custom-btn" style="display: none;">
+                        <i class="fas fa-undo"></i> New Text
+                    </button>
+                    <button class="btn btn-error" id="finish-custom-btn" style="display: none;">
+                        <i class="fas fa-flag-checkered"></i> Finished
+                    </button>
+                </div>
             </div>
         </section>
-        <section id="profile" class="mode-content"></section>
+
+        <!-- Profile Section -->
+        <section id="profile" class="mode-content">
+            <h2 class="section-title">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </h2>
+            
+            <div class="card">
+                <h3>Coming Soon</h3>
+                <p>User profile features will be available in a future update.</p>
+            </div>
+        </section>
     </main>
 
     <!-- Results Modal -->
     <div id="results-modal" class="modal">
         <div class="modal-content">
-            <h2>Practice Complete!</h2>
-            <div class="modal-stats-grid">
-                <p>Time: <span id="modal-time">0s</span></p>
-                <p>WPM: <span id="modal-wpm">0</span></p>
-                <p>Accuracy: <span id="modal-accuracy">100%</span></p>
-                <p>Correct Letters: <span id="modal-correct">0</span></p>
-                <p>Mistakes: <span id="modal-mistakes">0</span></p>
-                <p>Total Words: <span id="modal-words">0</span></p>
+            <div class="modal-header">
+                <h2><i class="fas fa-trophy"></i> Practice Complete!</h2>
             </div>
-            <button id="modal-ok-btn">OK</button>
+            
+            <div class="modal-stats-grid">
+                <div class="modal-stat" id="modal-accuracy-stat">
+                    <div>Accuracy</div>
+                    <div class="modal-stat-value" id="modal-accuracy">100%</div>
+                </div>
+                <div class="modal-stat" id="modal-correct-stat">
+                    <div>Correct Letters</div>
+                    <div class="modal-stat-value" id="modal-correct">0</div>
+                </div>
+                <div class="modal-stat" id="modal-mistakes-stat">
+                    <div>Mistakes</div>
+                    <div class="modal-stat-value" id="modal-mistakes">0</div>
+                </div>
+                <div class="modal-stat">
+                    <div>Time</div>
+                    <div class="modal-stat-value" id="modal-time">0s</div>
+                </div>
+                <div class="modal-stat">
+                    <div>WPM</div>
+                    <div class="modal-stat-value" id="modal-wpm">0</div>
+                </div>
+                <div class="modal-stat">
+                    <div>Total Words</div>
+                    <div class="modal-stat-value" id="modal-words">0</div>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary" id="modal-ok-btn">
+                <i class="fas fa-check"></i> OK
+            </button>
         </div>
     </div>
-
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -502,13 +1397,11 @@
             if (activePracticeArea) {
                 resetActivePractice();
             }
-            const freestyleResetBtn = document.getElementById('reset-freestyle-btn');
-            if (freestyleResetBtn.style.display !== 'none') {
-                freestyleResetBtn.click();
+            if (document.getElementById('reset-freestyle-btn').style.display !== 'none') {
+                document.getElementById('reset-freestyle-btn').click();
             }
-            const customResetBtn = document.getElementById('reset-custom-btn');
-            if (customResetBtn.style.display !== 'none') {
-                customResetBtn.click();
+            if (document.getElementById('reset-custom-btn').style.display !== 'none') {
+                document.getElementById('reset-custom-btn').click();
             }
         }
 
@@ -527,23 +1420,7 @@
                 }
             });
         });
-
-        // ======================================================
-        // UNIVERSAL FINISHED BUTTON LOGIC
-        // ======================================================
-        document.body.addEventListener('click', (e) => {
-            if (e.target.classList.contains('finish-btn')) {
-                // Find the currently active mode from the nav button
-                const activeNavButton = document.querySelector('.nav-btn.active');
-                if (activeNavButton) {
-                    const activeModeId = activeNavButton.id.replace('-btn', '');
-                    sessionStorage.setItem('activeModeOnReload', activeModeId);
-                }
-                // Now reload the page
-                location.reload();
-            }
-        });
-
+        
         // ======================================================
         // MODE 1: PRACTICE TESTS NAVIGATION
         // ======================================================
@@ -551,7 +1428,10 @@
         const backButtons = document.querySelectorAll('#mode1 .back-btn');
         const questionItems = document.querySelectorAll('#mode1 .question-item');
 
-        taskLinks.forEach(link => link.addEventListener('click', (e) => switchView(e.currentTarget.dataset.targetView)));
+        taskLinks.forEach(link => link.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchView(e.currentTarget.dataset.targetView);
+        }));
         backButtons.forEach(button => button.addEventListener('click', (e) => switchView(e.currentTarget.dataset.targetView)));
         questionItems.forEach(item => item.addEventListener('click', (e) => switchView(e.currentTarget.dataset.targetQuestion)));
 
@@ -578,16 +1458,20 @@
             const practiceArea = detailView.querySelector('.practice-area');
             const modelAnswerText = detailView.querySelector('.model-answer p').textContent.trim();
 
-            if (e.target.classList.contains('practice-btn')) {
+            if (e.target.closest('.practice-btn')) {
                 setupPracticeArea(detailView, 'practice');
                 initiateCustomPractice(practiceArea.querySelector('.practice-mode-view'), modelAnswerText);
-            } else if (e.target.classList.contains('write-btn')) {
+            } else if (e.target.closest('.write-btn')) {
                 setupPracticeArea(detailView, 'write');
                 initiateFreestylePractice(practiceArea.querySelector('.write-mode-view'));
-            } else if (e.target.classList.contains('pause-btn-local')) {
-                toggleLocalPause(e.target);
-            } else if (e.target.classList.contains('reset-btn-local')) {
-                resetLocalPractice(e.target);
+            } else if (e.target.closest('.pause-btn-local')) {
+                toggleLocalPause(e.target.closest('.pause-btn-local'));
+            } else if (e.target.closest('.reset-btn-local')) {
+                resetLocalPractice(e.target.closest('.reset-btn-local'));
+            } else if (e.target.closest('.finish-btn-practice')) {
+                 const currentMode = practiceArea.querySelector('.practice-mode-view').style.display === 'block' ? 'practice' : 'write';
+                 // For now, "Finished" in practice mode just resets the practice.
+                 resetLocalPractice(e.target.closest('.finish-btn-practice'));
             }
         });
         
@@ -614,8 +1498,10 @@
                 area.querySelector('.typing-input-local').value = '';
                 area.querySelector('.write-input-local').value = '';
                 area.querySelectorAll('.time-local, .wpm-local, .words-local, .chars-local').forEach(el => el.innerText = '0');
-                area.querySelectorAll('.accuracy-local').forEach(el => el.innerText = '100');
-                area.querySelectorAll('.pause-btn-local').forEach(btn => btn.innerText = 'Pause');
+                area.querySelectorAll('.accuracy-local').forEach(el => el.innerText = '100%');
+                area.querySelectorAll('.pause-btn-local').forEach(btn => {
+                    btn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+                });
             });
             document.querySelectorAll('.model-answer, .practice-controls').forEach(el => el.style.display = 'block');
         }
@@ -626,10 +1512,10 @@
             const input = view.querySelector('.typing-input-local, .write-input-local');
             
             if (activePracticeState.isPaused) {
-                pauseButton.innerText = 'Resume';
+                pauseButton.innerHTML = '<i class="fas fa-play"></i> Resume';
                 input.disabled = true;
             } else {
-                pauseButton.innerText = 'Pause';
+                pauseButton.innerHTML = '<i class="fas fa-pause"></i> Pause';
                 input.disabled = false;
                 input.focus();
             }
@@ -651,17 +1537,88 @@
             }
         }
 
+        // This is the generic function for custom text practice, used in Mode 1 and Mode 3
+        function handleTypingInput(input, charElements, timeEl, wpmEl, accEl, wordsEl, charsEl, state, onComplete) {
+            if (!state.interval && !state.isPaused) {
+                state.interval = setInterval(() => {
+                    if (!state.isPaused) {
+                        state.time++;
+                        updatePracticeStats();
+                    }
+                }, 1000);
+            }
+
+            const typed = input.value;
+            state.totalTyped = typed.length;
+            let currentCorrectCount = 0;
+            
+            charElements.forEach((charSpan, index) => {
+                const character = charSpan.innerText;
+                charSpan.classList.remove('correct', 'incorrect', 'current', 'corrected');
+
+                if (index < typed.length) {
+                    if (typed[index] === character) {
+                        charSpan.classList.add('correct');
+                        currentCorrectCount++;
+                        if (charSpan.dataset.mistake === 'true') {
+                            charSpan.classList.add('corrected');
+                        }
+                    } else {
+                        charSpan.classList.add('incorrect');
+                        if (charSpan.dataset.mistake !== 'true') {
+                            charSpan.dataset.mistake = 'true';
+                        }
+                    }
+                } else if (index === typed.length) {
+                    charSpan.classList.add('current');
+                }
+            });
+
+            state.correctChars = currentCorrectCount;
+            charElements[typed.length]?.scrollIntoView({ block: 'nearest' });
+            updatePracticeStats();
+
+            if (typed.length === charElements.length) {
+                 const finalMistakeCount = Array.from(charElements).filter(el => el.classList.contains('incorrect')).length;
+                 if (finalMistakeCount === 0) {
+                    onComplete();
+                 }
+            }
+
+            function updatePracticeStats() {
+                const accuracy = state.totalTyped > 0 ? Math.round((state.correctChars / state.totalTyped) * 100) : 100;
+                const wpm = state.time > 0 ? Math.round((state.correctChars / 5) / (state.time / 60)) : 0;
+                
+                timeEl.innerText = `${state.time}s`;
+                accEl.innerText = `${accuracy}%`;
+                wpmEl.innerText = wpm;
+                wordsEl.innerText = countWords(input.value);
+                charsEl.innerText = input.value.length;
+            }
+        }
+
         function initiateCustomPractice(view, text) {
             const display = view.querySelector('.text-display-area-local');
             const input = view.querySelector('.typing-input-local');
-            const timeEl = view.querySelector('.time-local');
-            const wpmEl = view.querySelector('.wpm-local');
-            const accEl = view.querySelector('.accuracy-local');
-            const wordsEl = view.querySelector('.words-local');
-            const charsEl = view.querySelector('.chars-local');
-            
-            let time = 0, correctChars = 0, totalTyped = 0, mistakeCount = 0;
-            
+            const onComplete = () => {
+                clearInterval(activePracticeState.interval);
+                activePracticeState.interval = null;
+                input.disabled = true;
+                const totalUniqueMistakes = display.querySelectorAll('.char[data-mistake="true"]').length;
+                const finalStats = {
+                    time: activePracticeState.time,
+                    wpm: view.querySelector('.wpm-local').innerText,
+                    accuracy: view.querySelector('.accuracy-local').innerText.replace('%', ''),
+                    mistakes: totalUniqueMistakes,
+                    words: view.querySelector('.words-local').innerText,
+                    correctLetters: activePracticeState.correctChars,
+                };
+                showResultsModal(finalStats);
+            };
+
+            const timeEl = view.querySelector('.time-local'), wpmEl = view.querySelector('.wpm-local'), accEl = view.querySelector('.accuracy-local'), wordsEl = view.querySelector('.words-local'), charsEl = view.querySelector('.chars-local');
+            activePracticeState = { ...activePracticeState, time: 0, correctChars: 0, totalTyped: 0, element: view };
+
             let charElements = text.split('').map(char => {
                 const span = document.createElement('span');
                 span.innerText = char;
@@ -671,95 +1628,20 @@
             });
             charElements[0]?.classList.add('current');
             input.focus();
-
-            activePracticeState.element = view;
-            
-            const updateStats = () => {
-                const typedText = input.value;
-                const accuracy = totalTyped > 0 ? Math.round((correctChars / totalTyped) * 100) : 100;
-                const wpm = time > 0 ? Math.round((correctChars / 5) / (time / 60)) : 0;
-                
-                timeEl.innerText = time;
-                accEl.innerText = accuracy;
-                wpmEl.innerText = wpm;
-                wordsEl.innerText = countWords(typedText);
-                charsEl.innerText = typedText.length;
-            };
-
-            input.oninput = () => {
-                if (!activePracticeState.interval) {
-                    activePracticeState.interval = setInterval(() => {
-                        if (!activePracticeState.isPaused) {
-                            time++;
-                            updateStats();
-                        }
-                    }, 1000);
-                }
-                const typed = input.value;
-                totalTyped = typed.length;
-                let currentCorrectCount = 0;
-                let currentMistakeCount = 0;
-
-                charElements.forEach((charSpan, index) => {
-                    const character = charSpan.innerText;
-                    charSpan.classList.remove('correct', 'incorrect', 'current', 'corrected');
-
-                    if (index < typed.length) {
-                        if (typed[index] === character) {
-                            charSpan.classList.add('correct');
-                            currentCorrectCount++;
-                            if (charSpan.dataset.mistake === 'true') {
-                                charSpan.classList.add('corrected');
-                            }
-                        } else {
-                            charSpan.classList.add('incorrect');
-                            if(charSpan.dataset.mistake !== 'true') {
-                                currentMistakeCount++;
-                                charSpan.dataset.mistake = 'true';
-                            }
-                        }
-                    } else if (index === typed.length) {
-                        charSpan.classList.add('current');
-                    }
-                });
-                correctChars = currentCorrectCount;
-                mistakeCount = display.querySelectorAll('.incorrect').length;
-
-                charElements[typed.length]?.scrollIntoView({ block: 'nearest' });
-                updateStats();
-
-                // --- TRIGGER MODAL ON COMPLETION ---
-                if (typed.length === charElements.length) {
-                    clearInterval(activePracticeState.interval);
-                    input.disabled = true;
-                    const finalStats = {
-                        time: time,
-                        wpm: wpmEl.innerText,
-                        accuracy: accEl.innerText,
-                        mistakes: mistakeCount,
-                        words: wordsEl.innerText,
-                        correctLetters: correctChars,
-                    };
-                    showResultsModal(finalStats);
-                }
-            };
+            input.oninput = () => handleTypingInput(input, charElements, timeEl, wpmEl, accEl, wordsEl, charsEl, activePracticeState, onComplete);
         }
         
         function initiateFreestylePractice(view) {
             const input = view.querySelector('.write-input-local');
-            const timeEl = view.querySelector('.time-local');
-            const wpmEl = view.querySelector('.wpm-local');
-            const wordsEl = view.querySelector('.words-local');
-            const charsEl = view.querySelector('.chars-local');
+            const timeEl = view.querySelector('.time-local'), wpmEl = view.querySelector('.wpm-local'), wordsEl = view.querySelector('.words-local'), charsEl = view.querySelector('.chars-local');
+            activePracticeState = { ...activePracticeState, time: 0, element: view };
             let time = 0;
             input.focus();
-            
-            activePracticeState.element = view;
             
             const updateStats = () => {
                 const text = input.value;
                 const wordCount = countWords(text);
-                timeEl.innerText = time;
+                timeEl.innerText = `${time}s`;
                 wpmEl.innerText = time > 0 ? Math.round(wordCount / (time / 60)) : 0;
                 wordsEl.innerText = wordCount;
                 charsEl.innerText = text.length;
@@ -785,26 +1667,41 @@
         const modalOkBtn = document.getElementById('modal-ok-btn');
 
         function showResultsModal(stats) {
+            const accuracyStat = document.getElementById('modal-accuracy-stat');
+            const correctStat = document.getElementById('modal-correct-stat');
+            const mistakesStat = document.getElementById('modal-mistakes-stat');
+
+            // Handle visibility for typing tests vs freestyle
+            if (stats.accuracy !== undefined) {
+                document.getElementById('modal-accuracy').innerText = `${stats.accuracy}%`;
+                document.getElementById('modal-correct').innerText = stats.correctLetters;
+                document.getElementById('modal-mistakes').innerText = stats.mistakes;
+                [accuracyStat, correctStat, mistakesStat].forEach(el => el.style.display = 'block');
+            } else {
+                [accuracyStat, correctStat, mistakesStat].forEach(el => el.style.display = 'none');
+            }
+            
             document.getElementById('modal-time').innerText = `${stats.time}s`;
             document.getElementById('modal-wpm').innerText = stats.wpm;
-            document.getElementById('modal-accuracy').innerText = `${stats.accuracy}%`;
-            document.getElementById('modal-mistakes').innerText = stats.mistakes;
             document.getElementById('modal-words').innerText = stats.words;
-            document.getElementById('modal-correct').innerText = stats.correctLetters;
-            resultsModal.style.display = 'flex';
+            resultsModal.classList.add('active');
         }
 
         modalOkBtn.addEventListener('click', () => {
-            resultsModal.style.display = 'none';
-            const activeMode = document.querySelector('.mode-content.active')?.id;
+            resultsModal.classList.remove('active');
+            const activeNavButton = document.querySelector('.nav-btn.active');
+            if (!activeNavButton) return;
+            const activeModeId = activeNavButton.id;
 
-            if (activeMode === 'mode1') {
+            if (activeModeId === 'mode1-btn') {
                  const activeDetailView = document.querySelector('.question-detail-view[style*="block"]');
                 if (activeDetailView) {
                     activeDetailView.querySelector('.reset-btn-local').click();
                 }
-            } else if (activeMode === 'mode3') {
-                resetPractice();
+            } else if (activeModeId === 'mode2-btn') {
+                resetFreestyle();
+            } else if (activeModeId === 'mode3-btn') {
+                restartCurrentPractice();
             }
         });
 
@@ -821,23 +1718,25 @@
         const fWpmDisplay = document.getElementById('freestyle-wpm');
         const fWordsDisplay = document.getElementById('freestyle-words');
         const fCharsDisplay = document.getElementById('freestyle-chars');
-        let freestyleTimerInterval, freestyleTimeElapsed = 0, isFreestylePaused = false, freestyleStarted = false;
+        let freestyleTimerInterval, freestyleTimeElapsed = 0, isFreestylePaused = false;
         
         startFreestyleBtn.addEventListener('click', startFreestyle);
         resetFreestyleBtn.addEventListener('click', resetFreestyle);
         pauseFreestyleBtn.addEventListener('click', toggleFreestylePause);
         restartFreestyleBtn.addEventListener('click', restartFreestyle);
+        finishFreestyleBtn.addEventListener('click', finishFreestyle);
         freestyleInput.addEventListener('input', updateFreestyleStats);
 
         function startFreestyle() {
             freestyleInput.disabled = false;
+            freestyleInput.focus();
+            
             startFreestyleBtn.style.display = 'none';
             pauseFreestyleBtn.style.display = 'inline-block';
             resetFreestyleBtn.style.display = 'inline-block';
             finishFreestyleBtn.style.display = 'inline-block';
-            freestyleInput.value = '';
-            freestyleInput.focus();
-            if (!freestyleStarted) { startFreestyleTimer(); freestyleStarted = true; }
+
+            startFreestyleTimer();
         }
 
         function updateFreestyleStats() {
@@ -849,10 +1748,11 @@
         }
 
         function startFreestyleTimer() {
+            if (freestyleTimerInterval) clearInterval(freestyleTimerInterval);
             freestyleTimerInterval = setInterval(() => {
                 if (!isFreestylePaused) {
                     freestyleTimeElapsed++;
-                    fTimeDisplay.innerText = freestyleTimeElapsed;
+                    fTimeDisplay.innerText = `${freestyleTimeElapsed}s`;
                     updateFreestyleStats();
                 }
             }, 1000);
@@ -862,46 +1762,55 @@
             isFreestylePaused = !isFreestylePaused;
             freestyleInput.disabled = isFreestylePaused;
             if (isFreestylePaused) {
-                pauseFreestyleBtn.innerText = 'Resume';
+                pauseFreestyleBtn.innerHTML = '<i class="fas fa-play"></i> Resume';
                 restartFreestyleBtn.style.display = 'inline-block';
             } else {
-                pauseFreestyleBtn.innerText = 'Pause';
+                pauseFreestyleBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
                 restartFreestyleBtn.style.display = 'none';
                 freestyleInput.focus();
             }
         }
+        
+        function finishFreestyle() {
+            clearInterval(freestyleTimerInterval);
+            freestyleInput.disabled = true;
+            const stats = {
+                time: freestyleTimeElapsed,
+                wpm: fWpmDisplay.innerText,
+                words: fWordsDisplay.innerText,
+            };
+            showResultsModal(stats);
+        }
 
         function resetFreestyleState() {
             clearInterval(freestyleTimerInterval);
-            freestyleStarted = false;
+            freestyleTimerInterval = null;
             isFreestylePaused = false;
             freestyleTimeElapsed = 0;
-            fTimeDisplay.innerText = '0';
+            fTimeDisplay.innerText = '0s';
             fWpmDisplay.innerText = '0';
             fWordsDisplay.innerText = '0';
             fCharsDisplay.innerText = '0';
-            pauseFreestyleBtn.innerText = 'Pause';
+            pauseFreestyleBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
             freestyleInput.value = '';
         }
 
-        function restartFreestyle() { resetFreestyleState(); startFreestyle(); }
+        function restartFreestyle() { 
+            resetFreestyleState(); 
+            startFreestyle(); 
+        }
         
         function resetFreestyle() {
             resetFreestyleState();
             freestyleInput.disabled = true;
             startFreestyleBtn.style.display = 'inline-block';
-            pauseFreestyleBtn.style.display = 'none';
-            restartFreestyleBtn.style.display = 'none';
-            resetFreestyleBtn.style.display = 'none';
-            finishFreestyleBtn.style.display = 'none';
+            [pauseFreestyleBtn, restartFreestyleBtn, resetFreestyleBtn, finishFreestyleBtn].forEach(btn => btn.style.display = 'none');
         }
 
         // ======================================================
-        // MODE 3: MAIN CUSTOM TEXT PRACTICE SCRIPT (INDEPENDENT)
+        // MODE 3: MAIN CUSTOM TEXT PRACTICE SCRIPT (INDEPENDENT) -- UPDATED LOGIC
         // ======================================================
         const sourceTextInput = document.getElementById('source-text-input');
-        const setupBox = document.getElementById('setup-box');
-        const practiceBox = document.getElementById('practice-box');
         const textDisplayArea = document.getElementById('text-display-area');
         const typingInput = document.getElementById('typing-input');
         const startCustomBtn = document.getElementById('start-custom-btn');
@@ -915,30 +1824,54 @@
         const cWordsDisplay = document.getElementById('custom-words');
         const cCharsDisplay = document.getElementById('custom-chars');
         
-        let cCharElements = [], cTotalTypedEntries = 0, cCorrectTypedEntries = 0, cMistakeCount = 0;
-        let cTimerInterval, cTimeElapsed = 0, isCustomPaused = false, cPracticeStarted = false;
+        const cPracticeState = {
+            interval: null, time: 0, correctChars: 0, totalTyped: 0, isPaused: false
+        };
+        let cCharElements = [];
         
+        const onCustomPracticeComplete = () => {
+            clearInterval(cPracticeState.interval);
+            cPracticeState.interval = null;
+            typingInput.disabled = true;
+            const totalUniqueMistakes = textDisplayArea.querySelectorAll('.char[data-mistake="true"]').length;
+            const finalStats = {
+                time: cPracticeState.time,
+                wpm: cWpmDisplay.innerText,
+                accuracy: cAccuracyDisplay.innerText.replace('%', ''),
+                mistakes: totalUniqueMistakes,
+                words: cWordsDisplay.innerText,
+                correctLetters: cPracticeState.correctChars,
+            };
+            showResultsModal(finalStats);
+        };
+
         startCustomBtn.addEventListener('click', startPractice);
-        resetCustomBtn.addEventListener('click', resetPractice);
+        resetCustomBtn.addEventListener('click', resetPractice); // This is "New Text"
         pauseCustomBtn.addEventListener('click', togglePause);
         restartCustomBtn.addEventListener('click', restartCurrentPractice);
+        finishCustomBtn.addEventListener('click', onCustomPracticeComplete);
         textDisplayArea.addEventListener('click', () => typingInput.focus());
-        typingInput.addEventListener('input', handleCustomInput);
+        typingInput.addEventListener('input', () => {
+            handleTypingInput(typingInput, cCharElements, cTimeDisplay, cWpmDisplay, cAccuracyDisplay, cWordsDisplay, cCharsDisplay, cPracticeState, onCustomPracticeComplete);
+        });
 
         function startPractice() {
             const text = sourceTextInput.value;
             if (text.trim() === '') { return alert('Please paste some text to practice.'); }
-            setupBox.style.display = 'none';
-            practiceBox.style.display = 'block';
+            
+            sourceTextInput.style.display = 'none';
+            textDisplayArea.style.display = 'block';
             startCustomBtn.style.display = 'none';
-            pauseCustomBtn.style.display = 'inline-block';
-            resetCustomBtn.style.display = 'inline-block';
-            finishCustomBtn.style.display = 'inline-block';
+            [pauseCustomBtn, resetCustomBtn, finishCustomBtn].forEach(btn => btn.style.display = 'inline-block');
+            restartCustomBtn.style.display = 'none';
+            
+            resetCustomPracticeState();
             setupCustomTextDisplay(text);
-            typingInput.focus();
         }
+
         function setupCustomTextDisplay(text) {
             textDisplayArea.innerHTML = '';
+            
             cCharElements = text.split('').map(char => {
                 const charSpan = document.createElement('span');
                 charSpan.innerText = char;
@@ -948,120 +1881,63 @@
             });
             cCharElements[0]?.classList.add('current');
             typingInput.focus();
-        }
-
-        function handleCustomInput() {
-            if (!cPracticeStarted) { startCustomTimer(); cPracticeStarted = true; }
-            if (isCustomPaused) return;
-            
-            const typedText = typingInput.value;
-            cTotalTypedEntries = typedText.length;
-            cCorrectTypedEntries = 0;
-            cMistakeCount = 0;
-
-            cCharElements.forEach((charElement, index) => {
-                const character = charElement.innerText;
-                charElement.classList.remove('correct', 'incorrect', 'current', 'corrected');
-
-                if (index < typedText.length) {
-                    if (typedText[index] === character) {
-                        charElement.classList.add('correct');
-                        cCorrectTypedEntries++;
-                        if (charElement.dataset.mistake === 'true') {
-                            charElement.classList.add('corrected');
-                        }
-                    } else {
-                        charElement.classList.add('incorrect');
-                        cMistakeCount++;
-                        charElement.dataset.mistake = 'true';
-                    }
-                } else if (index === typedText.length) {
-                    charElement.classList.add('current');
-                }
-            });
-            cCharElements[typedText.length]?.scrollIntoView({ block: 'nearest' });
-            updateCustomStats();
-            if (typedText.length === cCharElements.length) {
-                triggerCustomPracticeCompletion();
-            }
-        }
-
-        function updateCustomStats() {
-            const typedText = typingInput.value;
-            cAccuracyDisplay.innerText = cTotalTypedEntries > 0 ? Math.round((cCorrectTypedEntries / cTotalTypedEntries) * 100) : 100;
-            cWpmDisplay.innerText = cTimeElapsed > 0 ? Math.round((cCorrectTypedEntries / 5) / (cTimeElapsed / 60)) : 0;
-            cWordsDisplay.innerText = countWords(typedText);
-            cCharsDisplay.innerText = typedText.length;
+            handleTypingInput(typingInput, cCharElements, cTimeDisplay, cWpmDisplay, cAccuracyDisplay, cWordsDisplay, cCharsDisplay, cPracticeState, onCustomPracticeComplete);
         }
 
         function togglePause() {
-            isCustomPaused = !isCustomPaused;
-            if (isCustomPaused) {
-                clearInterval(cTimerInterval);
-                pauseCustomBtn.innerText = 'Resume';
+            cPracticeState.isPaused = !cPracticeState.isPaused;
+            typingInput.disabled = cPracticeState.isPaused;
+            if (cPracticeState.isPaused) {
+                pauseCustomBtn.innerHTML = '<i class="fas fa-play"></i> Resume';
                 restartCustomBtn.style.display = 'inline-block';
-                typingInput.blur();
             } else {
-                startCustomTimer();
-                pauseCustomBtn.innerText = 'Pause';
+                pauseCustomBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
                 restartCustomBtn.style.display = 'none';
                 typingInput.focus();
             }
         }
-        function startCustomTimer() {
-            cTimerInterval = setInterval(() => {
-                if (!isCustomPaused) {
-                    cTimeElapsed++;
-                    cTimeDisplay.innerText = cTimeElapsed;
-                    updateCustomStats();
-                }
-            }, 1000);
-        }
-        function triggerCustomPracticeCompletion() {
-            clearInterval(cTimerInterval);
-            typingInput.disabled = true;
-            const finalStats = {
-                time: cTimeElapsed,
-                wpm: cWpmDisplay.innerText,
-                accuracy: cAccuracyDisplay.innerText,
-                mistakes: cMistakeCount,
-                words: cWordsDisplay.innerText,
-                correctLetters: cCorrectTypedEntries,
-            };
-            showResultsModal(finalStats);
-        }
+        
         function resetCustomPracticeState() {
-            clearInterval(cTimerInterval);
-            cPracticeStarted = false;
-            isCustomPaused = false;
-            cTimeElapsed = 0;
-            cTotalTypedEntries = 0;
-            cCorrectTypedEntries = 0;
-            cMistakeCount = 0;
+            if (cPracticeState.interval) clearInterval(cPracticeState.interval);
+            cPracticeState.interval = null;
+            cPracticeState.time = 0;
+            cPracticeState.correctChars = 0;
+            cPracticeState.totalTyped = 0;
+            cPracticeState.isPaused = false;
+            
             typingInput.value = '';
             typingInput.disabled = false;
-            cTimeDisplay.innerText = '0';
+            
+            cTimeDisplay.innerText = '0s';
             cWpmDisplay.innerText = '0';
-            cAccuracyDisplay.innerText = '100';
+            cAccuracyDisplay.innerText = '100%';
             cWordsDisplay.innerText = '0';
             cCharsDisplay.innerText = '0';
-            pauseCustomBtn.innerText = 'Pause';
+            
+            pauseCustomBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
         }
+        
         function restartCurrentPractice() {
-            const originalText = cCharElements.map(el => el.innerText).join('');
+            const originalText = sourceTextInput.value;
             resetCustomPracticeState();
+            typingInput.disabled = false;
+            pauseCustomBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+            restartCustomBtn.style.display = 'none';
+            if (cPracticeState.isPaused) togglePause();
             setupCustomTextDisplay(originalText);
-            togglePause();
         }
-        function resetPractice() {
+        
+        function resetPractice() { // This is for the "New Text" button
             resetCustomPracticeState();
-            practiceBox.style.display = 'none';
-            setupBox.style.display = 'block';
+            
+            textDisplayArea.style.display = 'none';
+            sourceTextInput.style.display = 'block';
+            sourceTextInput.value = '';
+
             startCustomBtn.style.display = 'inline-block';
             [pauseCustomBtn, resetCustomBtn, restartCustomBtn, finishCustomBtn].forEach(btn => btn.style.display = 'none');
-            sourceTextInput.value = '';
         }
     });
     </script>
-</body> 
-    </html>
+</body>
+                                                                   </html>
